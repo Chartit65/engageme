@@ -3,101 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>engagement.live | WTI Shadow Terminal</title>
+    <title>engage me.live | Terminal</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background-color: #000; color: #fff; font-family: 'Courier New', monospace; overflow: hidden; }
-        
-        /* One-Screen Layout */
-        .terminal-wrapper { height: 100vh; width: 100vw; display: flex; flex-direction: column; }
-        
-        .header { 
-            height: 50px; 
-            background: #050505; 
-            border-bottom: 1px solid #333; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            padding: 0 20px; 
-            z-index: 1000;
+        body { background-color: #000; color: #fff; font-family: sans-serif; overflow: hidden; }
+
+        /* PHASE 1: THE LANDING PAGE */
+        #landing-page {
+            height: 100vh; width: 100vw;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            background: #000; z-index: 999; position: absolute;
+            transition: opacity 0.8s ease-out;
+        }
+        .logo { font-size: 4rem; font-weight: 800; margin-bottom: 20px; }
+        .logo span { color: #007bff; }
+        .enter-btn { 
+            background: #007bff; color: white; border: none; 
+            padding: 20px 50px; font-size: 1.2rem; font-weight: bold; 
+            cursor: pointer; border-radius: 5px; transition: 0.3s;
+        }
+        .enter-btn:hover { background: #0056b3; transform: scale(1.05); }
+
+        /* PHASE 2: THE TERMINAL (HIDDEN INITIALLY) */
+        #terminal-ui {
+            height: 100vh; width: 100vw;
+            display: none; flex-direction: column;
+            background: #050505; opacity: 0;
+            transition: opacity 1s;
         }
 
-        .main-content { flex: 1; display: flex; position: relative; }
-        
-        /* The Chart Container */
-        #chart-viewport { flex: 1; background: #000; position: relative; }
-        
-        /* Sidebar */
-        .sidebar { 
-            width: 280px; 
-            background: #0a0a0a; 
-            border-left: 1px solid #222; 
-            padding: 20px; 
-            display: flex; 
-            flex-direction: column; 
-            gap: 30px; 
-        }
+        .header { height: 60px; border-bottom: 1px solid #333; display: flex; align-items: center; padding: 0 20px; justify-content: space-between; }
+        .main-view { flex: 1; display: flex; position: relative; }
+        #chart-container { flex: 1; background: #000; position: relative; }
 
-        /* SHADOW LINE OVERLAY */
+        /* THE SHADOW PRINT VISUALS */
         #shadow-line {
-            position: absolute;
-            left: 0;
-            width: 100%;
-            height: 1px;
-            background: #007bff;
-            z-index: 500;
-            box-shadow: 0 0 15px #007bff;
+            position: absolute; left: 0; width: 100%; height: 2px;
+            background: #007bff; z-index: 100; box-shadow: 0 0 15px #007bff;
             pointer-events: none;
         }
-        #shadow-label {
-            position: absolute;
-            left: 0;
-            background: #007bff;
-            color: white;
-            padding: 2px 8px;
-            font-size: 11px;
-            font-weight: bold;
-            z-index: 501;
-            border-radius: 0 4px 4px 0;
-            pointer-events: none;
+        #shadow-tag {
+            position: absolute; left: 0; background: #007bff; color: white;
+            padding: 4px 10px; font-size: 12px; font-weight: bold;
+            z-index: 101; border-radius: 0 4px 4px 0;
         }
 
-        .stat-box { border-left: 3px solid #007bff; padding-left: 15px; }
-        .label { font-size: 10px; color: #555; text-transform: uppercase; letter-spacing: 1px; }
-        .value { font-size: 1.5rem; color: #00ff00; font-weight: bold; margin-top: 5px; }
+        .sidebar { width: 300px; background: #0a0a0a; border-left: 1px solid #222; padding: 30px; }
+        .data-point { margin-bottom: 30px; border-left: 4px solid #007bff; padding-left: 15px; }
+        .label { font-size: 11px; color: #666; text-transform: uppercase; letter-spacing: 1px; }
+        .value { font-size: 2rem; color: #00ff00; font-family: monospace; font-weight: bold; margin-top: 5px; }
     </style>
 </head>
 <body>
 
-    <div class="terminal-wrapper">
+    <div id="landing-page">
+        <div class="logo">engage me<span>.live</span></div>
+        <button class="enter-btn" onclick="startTerminal()">ACCESS TOOLS</button>
+    </div>
+
+    <div id="terminal-ui">
         <div class="header">
-            <div style="font-family: sans-serif; font-weight: 900; letter-spacing: -1px;">
-                engage me<span style="color: #007bff;">.live</span> <span style="font-weight: 100; color: #444; margin-left: 10px;">WTI_SHADOW_V2.0</span>
-            </div>
-            <div style="font-size: 10px; color: #00ff00;">● SYSTEM_LIVE</div>
+            <div style="font-weight: bold; letter-spacing: 2px;">WTI_SHADOW_TERMINAL_v2.5</div>
+            <div style="color: #00ff00; font-size: 12px;">● SYSTEM_ONLINE</div>
         </div>
-
-        <div class="main-content">
-            <div id="chart-viewport">
+        <div class="main-view">
+            <div id="chart-container">
                 <div id="shadow-line"></div>
-                <div id="shadow-label">SHADOW_PRINT</div>
-                
-                <div id="tv_chart_container" style="height: 100%; width: 100%;"></div>
+                <div id="shadow-tag">SHADOW PRINT</div>
+                <div id="tradingview_widget" style="height: 100%; width: 100%;"></div>
             </div>
-
             <div class="sidebar">
-                <div class="stat-box">
+                <div class="data-point">
                     <div class="label">Shadow Price</div>
-                    <div id="live-price" class="value">$111.85</div>
+                    <div id="live-shadow-val" class="value">$111.85</div>
                 </div>
-                <div class="stat-box">
+                <div class="data-point">
                     <div class="label">Market State</div>
-                    <div style="color: #007bff; font-weight: bold; margin-top: 5px;">WEEKEND_ACTIVE</div>
-                </div>
-                <div style="margin-top: auto; font-size: 9px; color: #333; line-height: 1.5;">
-                    DATA SOURCE: INTERBANK FEED<br>
-                    TIME_SYNC: UTC+0<br>
-                    MODE: SHADOW_OVERLAY
+                    <div style="color: #007bff; font-weight: bold; margin-top: 5px; font-size: 1.2rem;">WEEKEND ACTIVE</div>
                 </div>
             </div>
         </div>
@@ -105,48 +88,57 @@
 
     <script type="text/javascript" src="s3.tradingview.com/tv.js"></script>
     <script>
-        // 1. Initialize Chart Immediately
-        new TradingView.widget({
-            "autosize": true,
-            "symbol": "TVC:USOIL",
-            "interval": "30",
-            "timezone": "Etc/UTC",
-            "theme": "dark",
-            "style": "1",
-            "locale": "en",
-            "enable_publishing": false,
-            "hide_top_toolbar": false,
-            "hide_legend": true,
-            "save_image": false,
-            "container_id": "tv_chart_container",
-            "overrides": {
-                "paneProperties.background": "#000000",
-                "mainSeriesProperties.candleStyle.upColor": "#00ff00",
-                "mainSeriesProperties.candleStyle.downColor": "#ff0000"
-            }
-        });
-
-        // 2. Shadow Print Logic
-        const line = document.getElementById('shadow-line');
-        const label = document.getElementById('shadow-label');
-        const priceDisplay = document.getElementById('live-price');
-        
-        let basePrice = 111.85;
-
-        setInterval(() => {
-            // Calculate a tight weekend flux
-            let move = (Math.random() - 0.5) * 0.12;
-            basePrice = (parseFloat(basePrice) + move).toFixed(2);
+        function startTerminal() {
+            // 1. Fade out landing
+            const landing = document.getElementById('landing-page');
+            landing.style.opacity = '0';
             
-            // Update Sidebar
-            priceDisplay.innerText = `$${basePrice}`;
-            
-            // Update Visual Line (Lock to chart middle-upper section)
-            // This prevents the line from flying off the screen when zooming
-            let visualY = 280 + (Math.random() * 60); 
-            line.style.top = `${visualY}px`;
-            label.style.top = `${visualY - 14}px`;
-        }, 2000);
+            setTimeout(() => {
+                landing.style.display = 'none';
+                const terminal = document.getElementById('terminal-ui');
+                terminal.style.display = 'flex';
+                
+                // 2. Fade in terminal
+                setTimeout(() => { 
+                    terminal.style.opacity = '1'; 
+                    loadTradingView();
+                    runShadowEngine();
+                }, 50);
+            }, 800);
+        }
+
+        function loadTradingView() {
+            new TradingView.widget({
+                "autosize": true,
+                "symbol": "TVC:USOIL",
+                "interval": "30",
+                "timezone": "Etc/UTC",
+                "theme": "dark",
+                "style": "1",
+                "locale": "en",
+                "container_id": "tradingview_widget",
+                "overrides": {
+                    "paneProperties.background": "#000000"
+                }
+            });
+        }
+
+        function runShadowEngine() {
+            const line = document.getElementById('shadow-line');
+            const tag = document.getElementById('shadow-tag');
+            const val = document.getElementById('live-shadow-val');
+            let p = 111.85;
+
+            setInterval(() => {
+                p = (parseFloat(p) + (Math.random() - 0.5) * 0.12).toFixed(2);
+                val.innerText = `$${p}`;
+                
+                // Position logic - stays in visual center area
+                let y = 240 + (Math.random() * 60);
+                line.style.top = y + 'px';
+                tag.style.top = (y - 18) + 'px';
+            }, 2500);
+        }
     </script>
 </body>
 </html>
