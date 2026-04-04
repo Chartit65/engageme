@@ -8,17 +8,17 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background-color: #000; color: #fff; font-family: sans-serif; overflow: hidden; }
         #landing-page { height: 100vh; width: 100vw; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #000; position: fixed; z-index: 999; }
-        .logo { font-size: 4rem; font-weight: 800; margin-bottom: 20px; }
+        .logo { font-size: 3.5rem; font-weight: 800; margin-bottom: 20px; }
         .logo span { color: #007bff; }
         .enter-btn { background: #007bff; color: white; border: none; padding: 20px 50px; font-size: 1.2rem; font-weight: bold; cursor: pointer; border-radius: 5px; }
-        #terminal-ui { height: 100vh; width: 100vw; display: none; flex-direction: column; background: #050505; }
-        .header { height: 60px; border-bottom: 1px solid #333; display: flex; align-items: center; padding: 0 20px; justify-content: space-between; }
+        #terminal-ui { height: 100vh; width: 100vw; display: none; flex-direction: column; background: #000; }
+        .header { height: 50px; border-bottom: 1px solid #333; display: flex; align-items: center; padding: 0 20px; justify-content: space-between; }
         .main-view { flex: 1; display: flex; position: relative; }
         #chart-container { flex: 1; background: #000; position: relative; }
         #shadow-line { position: absolute; left: 0; width: 100%; height: 2px; background: #007bff; z-index: 100; box-shadow: 0 0 15px #007bff; pointer-events: none; }
         #shadow-tag { position: absolute; left: 0; background: #007bff; color: white; padding: 4px 10px; font-size: 12px; font-weight: bold; z-index: 101; border-radius: 0 4px 4px 0; }
-        .sidebar { width: 300px; background: #0a0a0a; border-left: 1px solid #222; padding: 30px; }
-        .value { font-size: 2.2rem; color: #00ff00; font-family: monospace; font-weight: bold; }
+        .sidebar { width: 280px; background: #0a0a0a; border-left: 1px solid #222; padding: 25px; }
+        .value { font-size: 2rem; color: #00ff00; font-family: monospace; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -28,37 +28,53 @@
     </div>
     <div id="terminal-ui">
         <div class="header">
-            <div style="font-weight: bold;">WTI_SHADOW_V10_LIVE</div>
-            <div style="color: #00ff00;">● SYSTEM_READY</div>
+            <div style="font-weight: bold; font-size: 12px;">WTI_NYMEX_TERMINAL_V11</div>
+            <div style="color: #00ff00; font-size: 10px;">MARKET_CLOSED (WEEKEND)</div>
         </div>
         <div class="main-view">
             <div id="chart-container">
                 <div id="shadow-line"></div>
                 <div id="shadow-tag">SHADOW_PRINT</div>
-                <div id="tv_widget" style="height: 100%; width: 100%;"></div>
+                <div id="tv_v11" style="height: 100%; width: 100%;"></div>
             </div>
             <div class="sidebar">
-                <div style="font-size: 11px; color: #666;">SHADOW PRICE</div>
+                <div style="font-size: 10px; color: #666; letter-spacing: 1px;">SHADOW PRICE</div>
                 <div id="price-val" class="value">$111.85</div>
             </div>
         </div>
     </div>
+
     <script type="text/javascript" src="s3.tradingview.com/tv.js"></script>
     <script>
         function startTerminal() {
             document.getElementById('landing-page').style.display = 'none';
             document.getElementById('terminal-ui').style.display = 'flex';
-            new TradingView.widget({
-                "autosize": true, "symbol": "TVC:USOIL", "interval": "60", "theme": "dark", "style": "1", "container_id": "tv_widget", "enable_publishing": false, "hide_legend": true
-            });
+            
+            setTimeout(function() {
+                new TradingView.widget({
+                    "autosize": true,
+                    "symbol": "CME_MINI:QM1!",
+                    "interval": "60",
+                    "timezone": "America/New_York",
+                    "theme": "dark",
+                    "style": "1",
+                    "container_id": "tv_v11",
+                    "hide_side_toolbar": false,
+                    "allow_symbol_change": true,
+                    "details": true,
+                    "hotlist": true,
+                    "calendar": true
+                });
+            }, 100);
+
             let p = 111.85;
             setInterval(() => {
-                p = (parseFloat(p) + (Math.random() - 0.5) * 0.1).toFixed(2);
+                p = (parseFloat(p) + (Math.random() - 0.5) * 0.08).toFixed(2);
                 document.getElementById('price-val').innerText = `$${p}`;
-                let y = 200 + (Math.random() * 100);
+                let y = 250 + (Math.random() * 80);
                 document.getElementById('shadow-line').style.top = y + 'px';
                 document.getElementById('shadow-tag').style.top = (y - 18) + 'px';
-            }, 2000);
+            }, 2500);
         }
     </script>
 </body>
