@@ -2,94 +2,91 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>WTI SHADOW TERMINAL | AUTO-SCALE</title>
-    <script type="text/javascript" src="s3.tradingview.com/tv.js"></script>
+    <title>engage me.live | Terminal</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: #000; color: #fff; font-family: 'Courier New', Courier, monospace; overflow: hidden; height: 100vh; width: 100vw; }
-        #main-container { display: flex; height: 100%; width: 100%; }
+        body { background-color: #000; color: #fff; font-family: sans-serif; overflow: hidden; }
         
-        /* FLEXIBLE CHART ZONE */
-        #chart-zone { flex: 1; position: relative; height: 100%; background: #000; }
-        
-        /* SHADOW OVERLAYS (Invisible to Mouse) */
-        #shadow-line { 
-            position: absolute; left: 0; width: 100%; height: 2px; 
-            background: #007bff; z-index: 999; box-shadow: 0 0 15px #007bff; 
-            pointer-events: none; 
+        /* LANDING PAGE */
+        #landing-page { 
+            height: 100vh; width: 100vw; display: flex; flex-direction: column; 
+            align-items: center; justify-content: center; background: #000; 
+            position: fixed; z-index: 999; 
         }
-        #shadow-tag { 
-            position: absolute; left: 15px; background: #007bff; color: white; 
-            padding: 4px 10px; font-size: 13px; font-weight: bold; z-index: 1000; 
-            border-radius: 2px; pointer-events: none;
+        .logo { font-size: 4rem; font-weight: 800; margin-bottom: 20px; }
+        .logo span { color: #007bff; }
+        .enter-btn { 
+            background: #007bff; color: white; border: none; padding: 20px 50px; 
+            font-size: 1.2rem; font-weight: bold; cursor: pointer; border-radius: 5px; 
         }
 
-        /* DATA SIDEBAR */
-        #sidebar { width: 280px; background: #050505; border-left: 1px solid #222; padding: 30px 15px; z-index: 1001; }
-        .data-box { border-left: 3px solid #007bff; padding-left: 15px; margin-bottom: 30px; }
-        .label { font-size: 10px; color: #555; letter-spacing: 1px; }
-        .value { font-size: 2.4rem; font-weight: bold; color: #00ff00; font-family: monospace; }
+        /* TERMINAL UI */
+        #terminal-ui { height: 100vh; width: 100vw; display: none; flex-direction: column; background: #050505; }
+        .header { height: 60px; border-bottom: 1px solid #333; display: flex; align-items: center; padding: 0 20px; justify-content: space-between; }
+        .main-view { flex: 1; display: flex; position: relative; }
+        #chart-container { flex: 1; background: #000; position: relative; }
+        
+        /* SHADOW OVERLAYS */
+        #shadow-line { position: absolute; left: 0; width: 100%; height: 2px; background: #007bff; z-index: 100; box-shadow: 0 0 15px #007bff; pointer-events: none; }
+        #shadow-tag { position: absolute; left: 0; background: #007bff; color: white; padding: 4px 10px; font-size: 12px; font-weight: bold; z-index: 101; border-radius: 0 4px 4px 0; }
+        
+        .sidebar { width: 300px; background: #0a0a0a; border-left: 1px solid #222; padding: 30px; }
+        .value { font-size: 2.2rem; color: #00ff00; font-family: monospace; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <div id="main-container">
-        <div id="chart-zone">
-            <div id="shadow-line" style="top: 50%;"></div>
-            <div id="shadow-tag" style="top: calc(50% - 25px);">SHADOW_PRINT</div>
-            
-            <div id="tradingview_v13" style="height: 100%; width: 100%;"></div>
-        </div>
+    <div id="landing-page">
+        <div class="logo">engage me<span>.live</span></div>
+        <button class="enter-btn" onclick="startTerminal()">ACCESS TOOLS</button>
+    </div>
 
-        <div id="sidebar">
-            <div class="data-box">
-                <div class="label">WTI CRUDE</div>
-                <div id="price-val" class="value">111.85</div>
-                <div style="font-size: 11px; color: #007bff; margin-top: 8px;">● V13_AUTO_SCALE</div>
+    <div id="terminal-ui">
+        <div class="header">
+            <div style="font-weight: bold;">WTI_SHADOW_V14</div>
+            <div style="color: #00ff00;">● SYSTEM_READY</div>
+        </div>
+        <div class="main-view">
+            <div id="chart-container">
+                <div id="shadow-line"></div>
+                <div id="shadow-tag">SHADOW_PRINT</div>
+                <div id="tv_widget_v14" style="height: 100%; width: 100%;"></div>
             </div>
-            <div style="font-size: 10px; color: #333; margin-top: auto;">NYMEX_CL1!_FEED</div>
+            <div class="sidebar">
+                <div style="font-size: 11px; color: #666;">SHADOW PRICE</div>
+                <div id="price-val" class="value">$111.85</div>
+            </div>
         </div>
     </div>
 
+    <script type="text/javascript" src="s3.tradingview.com/tv.js"></script>
     <script>
-        // Use the same flexible widget logic as the main site
-        new TradingView.widget({
-            "autosize": true,
-            "symbol": "NYMEX:CL1!",
-            "interval": "60",
-            "timezone": "America/New_York",
-            "theme": "dark",
-            "style": "1",
-            "locale": "en",
-            "toolbar_bg": "#f1f3f6",
-            "enable_publishing": false,
-            "withdateranges": true,
-            "hide_side_toolbar": false,
-            "allow_symbol_change": true,
-            "container_id": "tradingview_v13",
-            "show_popup_button": true,
-            "popup_width": "1000",
-            "popup_height": "650",
-            "details": true,
-            "hotlist": true,
-            "calendar": true
-        });
-
-        // Shadow Bouncer Logic
-        let p = 111.85;
-        const line = document.getElementById('shadow-line');
-        const tag = document.getElementById('shadow-tag');
-        const val = document.getElementById('price-val');
-
-        setInterval(() => {
-            p = (parseFloat(p) + (Math.random() - 0.5) * 0.07).toFixed(2);
-            val.innerText = p;
+        function startTerminal() {
+            document.getElementById('landing-page').style.display = 'none';
+            document.getElementById('terminal-ui').style.display = 'flex';
             
-            // Keeps the shadow line bouncing in the "middle" view
-            let y = (window.innerHeight / 2) + (Math.random() * 80 - 40);
-            line.style.top = y + 'px';
-            tag.style.top = (y - 30) + 'px';
-        }, 2500);
+            // Using the symbol you know works, but with the '!' to fix the contract rollover
+            new TradingView.widget({
+                "autosize": true,
+                "symbol": "NYMEX:CL1!",
+                "interval": "60",
+                "theme": "dark",
+                "style": "1",
+                "container_id": "tv_widget_v14",
+                "withdateranges": true,
+                "hide_side_toolbar": false,
+                "allow_symbol_change": true
+            });
+
+            let p = 111.85;
+            setInterval(() => {
+                p = (parseFloat(p) + (Math.random() - 0.5) * 0.1).toFixed(2);
+                document.getElementById('price-val').innerText = `$${p}`;
+                let y = 200 + (Math.random() * 100);
+                document.getElementById('shadow-line').style.top = y + 'px';
+                document.getElementById('shadow-tag').style.top = (y - 18) + 'px';
+            }, 2000);
+        }
     </script>
 </body>
 </html>
