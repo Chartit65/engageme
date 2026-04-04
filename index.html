@@ -10,6 +10,27 @@
     <div style="margin-top: 30px; padding: 20px; border: 2px solid #00ff00; display: inline-block;">
         <h3>SYSTEM STATUS: ONLINE</h3>
     </div>
+<button id="installApp" style="display:none; padding: 20px; background: #28a745; color: white; font-size: 22px; border-radius: 10px; cursor: pointer; width: 100%; margin: 20px 0; border: none; font-weight: bold;">
+  INSTALL OIL TRACKER APP
+</button>
+
+<script>
+  let deferredPrompt;
+  const installBtn = document.getElementById('installApp');
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    installBtn.style.display = 'block';
+  });
+  installBtn.addEventListener('click', async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      deferredPrompt = null;
+    }
+  });
+</script>
+
 </body>
 
 </html>
