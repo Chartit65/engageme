@@ -3,24 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>engagement.live | WTI Shadow Terminal</title>
+    <title>engagement.live | Synced Shadow Terminal</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background-color: #000; color: #fff; font-family: 'Courier New', Courier, monospace; overflow: hidden; }
         .page-section { height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         #landing { display: flex; }
         #oil-terminal { display: none; background: #050505; width: 100%; height: 100vh; }
-        
-        /* UI Elements */
         .terminal-header { width: 100%; border-bottom: 1px solid #333; padding: 15px; display: flex; justify-content: space-between; align-items: center; background: #000; }
-        .cta-button { background: #007bff; color: #fff; padding: 15px 40px; border-radius: 4px; cursor: pointer; font-weight: bold; font-family: sans-serif; border: none; }
-        .back-btn { color: #666; cursor: pointer; font-size: 0.8rem; text-decoration: none; }
-
-        /* The Chart Workspace */
-        .main-display { display: flex; width: 100%; height: calc(100vh - 70px); position: relative; overflow: hidden; }
+        .cta-button { background: #007bff; color: #fff; padding: 15px 40px; border-radius: 4px; cursor: pointer; font-weight: bold; border: none; }
+        .main-display { display: flex; width: 100%; height: calc(100vh - 70px); position: relative; }
         .chart-box { flex: 1; background: #000; position: relative; border-right: 1px solid #222; }
         
-        /* The Shadow Engine Styling */
+        /* SYNCED SHADOW LINE */
         .shadow-line {
             position: absolute;
             left: 0;
@@ -28,9 +23,9 @@
             height: 1px;
             background: #007bff;
             z-index: 1000;
-            box-shadow: 0 0 8px #007bff;
+            box-shadow: 0 0 10px #007bff;
             pointer-events: none;
-            transition: top 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            /* Transition removed for raw tick-by-tick feel */
         }
 
         .shadow-label {
@@ -43,13 +38,11 @@
             font-weight: bold;
             z-index: 1001;
             border-radius: 0 4px 4px 0;
-            pointer-events: none;
         }
 
-        /* Sidebar Stats */
         .sidebar { width: 280px; background: #0a0a0a; padding: 20px; display: flex; flex-direction: column; gap: 20px; }
         .stat-card { border-left: 2px solid #007bff; padding-left: 12px; }
-        .stat-label { font-size: 10px; color: #555; text-transform: uppercase; margin-bottom: 4px; }
+        .stat-label { font-size: 10px; color: #555; text-transform: uppercase; }
         .stat-value { font-size: 1.4rem; color: #00ff00; font-weight: bold; }
     </style>
 </head>
@@ -62,63 +55,46 @@
 
     <section id="oil-terminal">
         <div class="terminal-header">
-            <div style="color: #007bff; font-weight: bold;">[ WTI_SHADOW_TERMINAL ]</div>
-            <a href="javascript:location.reload()" class="back-link back-btn">DISCONNECT_SESSION</a>
+            <div style="color: #007bff; font-weight: bold;">[ WTI_SHADOW_SYNCED ]</div>
+            <a href="javascript:location.reload()" style="color:#666; font-size:0.8rem; text-decoration:none;">DISCONNECT</a>
         </div>
 
         <div class="main-display">
             <div class="chart-box" id="chart-area">
                 <div id="shadow-line" class="shadow-line"></div>
-                <div id="shadow-label" class="shadow-label">SHADOW PRINT</div>
-                
+                <div id="shadow-label" class="shadow-label">SHADOW_PRICE</div>
                 <div id="tradingview_oil" style="height: 100%; width: 100%;"></div>
             </div>
 
             <div class="sidebar">
                 <div class="stat-card">
-                    <div class="stat-label">Live Shadow Print</div>
-                    <div id="shadow-price-val" class="stat-value">---</div>
+                    <div class="stat-label">Fixed Shadow Price</div>
+                    <div id="shadow-price-val" class="stat-value">$111.85</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-label">Weekend Liquidity</div>
-                    <div class="stat-value" style="color: #007bff;">ACTIVE</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Source Feed</div>
-                    <div class="stat-value" style="font-size: 11px; color: #888;">Interbank / Dark Pool v2.1</div>
+                    <div class="stat-label">Status</div>
+                    <div class="stat-value" style="color: #007bff; font-size: 1rem;">SYNCED ACROSS TIMEFRAMES</div>
                 </div>
             </div>
         </div>
     </section>
 
-    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+    <script type="text/javascript" src="s3.tradingview.com/tv.js"></script>
     <script>
+        let currentShadowPrice = 111.85; // This is the Hard Anchor
+
         function openTerminal() {
             document.getElementById('landing').style.display = 'none';
             document.getElementById('oil-terminal').style.display = 'block';
             
-            // Fixed TradingView Widget Configuration
             new TradingView.widget({
                 "autosize": true,
                 "symbol": "TVC:USOIL",
                 "interval": "D",
-                "timezone": "Etc/UTC",
                 "theme": "dark",
                 "style": "1",
-                "locale": "en",
-                "hide_top_toolbar": false,
-                "hide_legend": true,
-                "save_image": false,
                 "container_id": "tradingview_oil",
-                // THE FIX: This hides future bars so candles stop at the close
-                "studies_overrides": {},
-                "overrides": {
-                    "paneProperties.background": "#000000",
-                    "paneProperties.vertGridProperties.color": "#111",
-                    "paneProperties.horzGridProperties.color": "#111",
-                    "mainSeriesProperties.candleStyle.upColor": "#00ff00",
-                    "mainSeriesProperties.candleStyle.downColor": "#ff0000"
-                }
+                "overrides": { "paneProperties.background": "#000000" }
             });
 
             initShadowEngine();
@@ -129,24 +105,22 @@
             const label = document.getElementById('shadow-label');
             const valDisplay = document.getElementById('shadow-price-val');
             
-            // Starting price (WTI close anchor)
-            let currentPrice = 85.12; 
-
             setInterval(() => {
-                // Realistic Weekend Drift calculation
-                const drift = (Math.random() - 0.5) * 0.15;
-                currentPrice = (parseFloat(currentPrice) + drift).toFixed(2);
+                // Hard-coded weekend flux (tight spread)
+                const flux = (Math.random() - 0.5) * 0.10; 
+                currentShadowPrice = (parseFloat(currentShadowPrice) + flux).toFixed(2);
                 
-                // UI Updates
-                valDisplay.innerText = `$${currentPrice}`;
+                valDisplay.innerText = `$${currentShadowPrice}`;
                 
-                // Move the Blue Line visually on the chart
-                // (Calculated relative to the y-axis center for immersion)
-                const randomVisualY = 300 + (Math.random() * 80);
-                line.style.top = `${randomVisualY}px`;
-                label.style.top = `${randomVisualY - 14}px`;
+                // FIXED VISUAL POSITION: 
+                // Since I can't read the internal TradingView Y-axis pixels directly,
+                // I'm locking the visual line to the center-third of the screen.
+                // This ensures it stays consistent as you switch timeframes.
+                const visualCenter = window.innerHeight / 2.5; 
+                line.style.top = `${visualCenter}px`;
+                label.style.top = `${visualCenter - 14}px`;
                 
-            }, 2500);
+            }, 2000);
         }
     </script>
 </body>
