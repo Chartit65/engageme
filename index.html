@@ -38,3 +38,13 @@
   </div>
   <p style="color: #fff; font-size: 14px;">Step 2: Select <strong>"Install"</strong> or <strong>"Add to Home Screen"</strong> from the menu list.</p>
 </div>
+
+    <script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/engageme/sw.js')
+        .then(reg => console.log('Service Worker Registered'))
+        .catch(err => console.log('Service Worker Failed', err));
+    });
+  }
+</script>
