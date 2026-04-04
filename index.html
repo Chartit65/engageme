@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>engagement.live | Real-Time Networking</title>
+    <title>engagement.live | Functional Tools</title>
     <style>
-        /* Forces the page to occupy the full screen and centers content */
         * {
             margin: 0;
             padding: 0;
@@ -13,7 +12,7 @@
         }
 
         body {
-            background-color: #000000; /* Solid black background */
+            background-color: #000000;
             color: #ffffff;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
@@ -36,37 +35,37 @@
             margin-bottom: 10px;
         }
 
+        /* Styling for the 'live' part to match your blue preference */
         h1 span {
-            color: #007bff; /* Highlights the .live part */
+            color: #007bff; 
         }
 
         .mission {
-            font-size: clamp(1.2rem, 4vw, 1.8rem);
-            color: #cccccc;
+            font-size: clamp(1.1rem, 3.5vw, 1.6rem);
+            color: #bbbbbb;
             margin-bottom: 40px;
-            font-weight: 300;
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .cta-button {
             display: inline-block;
             background-color: #007bff;
             color: white;
-            padding: 18px 45px;
-            font-size: 1.2rem;
+            padding: 18px 50px;
+            font-size: 1.1rem;
             font-weight: 600;
             text-decoration: none;
-            border-radius: 50px;
-            transition: transform 0.2s, background-color 0.2s;
-            box-shadow: 0 10px 20px rgba(0, 123, 255, 0.3);
+            border-radius: 4px; /* More "functional/tool" feel than rounded */
+            transition: all 0.2s ease;
+            border: 1px solid #007bff;
         }
 
         .cta-button:hover {
-            background-color: #0056b3;
+            background-color: transparent;
+            color: #007bff;
             transform: translateY(-2px);
-        }
-
-        .cta-button:active {
-            transform: translateY(0);
         }
     </style>
 </head>
@@ -74,8 +73,9 @@
 
     <div class="content-wrapper">
         <h1>engage me<span>.live</span></h1>
-        <p class="mission">Real-time networking for the world.</p>
-        <a href="#" class="cta-button">Enter Network</a>
+        <p class="mission">Functional Tools for the Real World</p>
+        
+        <a href="#" class="cta-button">Access Tools</a>
     </div>
 
 </body>
