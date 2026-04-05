@@ -3,163 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EngageMe.Live</title>
+    <title>EngageMe.Live Terminal</title>
+    <script src="unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
     <style>
-        body {
-            background-color: #000;
-            color: #fff;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden;
-            text-align: center;
-        }
-
-        /* --- LANDING PAGE STYLE --- */
-        #landing-page {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            z-index: 2;
-        }
-
-        h1 {
-            font-size: 3.5rem;
-            letter-spacing: 0.3rem;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            text-shadow: 0 0 15px rgba(255,255,255,0.3);
-        }
-
-        .tagline {
-            font-size: 1.2rem;
-            color: #aaa;
-            margin-bottom: 40px;
-            letter-spacing: 1px;
-        }
-
-        .enter-button {
-            background-color: #007bff;
-            color: white;
-            padding: 18px 50px;
-            font-size: 1.3rem;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            text-transform: uppercase;
-            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.4);
-            transition: all 0.3s ease;
-        }
-
-        .enter-button:hover {
-            background-color: #0056b3;
-            transform: scale(1.05);
-            box-shadow: 0 6px 25px rgba(0, 123, 255, 0.6);
-        }
-
-        /* --- TERMINAL STYLE (Hidden by default) --- */
-        #terminal-view {
-            display: none; 
-            width: 90%;
-            max-width: 850px;
-            border: 2px solid #0f0;
-            padding: 25px;
-            background: #050505;
-            box-shadow: 0 0 30px rgba(0, 255, 0, 0.2);
-            color: #0f0;
-            font-family: 'Courier New', Courier, monospace;
-            text-align: left;
-        }
-
-        canvas {
-            width: 100%;
-            height: 350px;
-            border-bottom: 1px solid #0f0;
-            margin-bottom: 20px;
-            background: #000;
-        }
-
-        .controls { 
-            display: flex; 
-            gap: 15px; 
-            justify-content: center; 
-        }
-
-        .t-btn {
-            background: #000; 
-            color: #0f0; 
-            border: 1px solid #0f0;
-            padding: 12px 24px; 
-            cursor: pointer;
-            font-family: inherit;
-            transition: 0.2s;
-        }
-
-        .t-btn:hover { 
-            background: #0f0; 
-            color: #000; 
-        }
-
-        #status {
-            margin-top: 0;
-            font-size: 1.2rem;
-            letter-spacing: 1px;
-        }
+        body { background-color: #000; color: #0f0; font-family: 'Courier New', Courier; margin: 0; display: flex; flex-direction: column; align-items: center; height: 100vh; }
+        #landing-page { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; width: 100%; z-index: 10; background: #000; position: fixed; }
+        h1 { font-size: 3rem; letter-spacing: 5px; }
+        .enter-button { background: #007bff; color: #fff; padding: 15px 40px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        
+        #terminal-view { display: none; width: 95%; max-width: 1000px; margin-top: 20px; }
+        #chart-container { width: 100%; height: 500px; border: 1px solid #333; }
+        .controls { display: flex; gap: 10px; margin-top: 15px; justify-content: center; }
+        .t-btn { background: #111; color: #0f0; border: 1px solid #0f0; padding: 10px 20px; cursor: pointer; }
+        .t-btn:hover { background: #0f0; color: #000; }
     </style>
 </head>
 <body>
 
     <div id="landing-page">
         <h1>ENGAGEME.LIVE</h1>
-        <p class="tagline">Advanced Market Intelligence & Astral Data</p>
+        <p style="color: #888;">Advanced Market Intelligence & Astral Data</p>
         <button class="enter-button" onclick="unlockSystem()">ENTER SYSTEM</button>
     </div>
 
     <div id="terminal-view">
-        <h2 id="status">>> INITIALIZING SECURE LINK...</h2>
-        <canvas id="chartCanvas"></canvas>
+        <div id="status">>> SYSTEM ONLINE: TRACKING SHADOW PRINTS</div>
+        <div id="chart-container"></div>
         <div class="controls">
-            <button class="t-btn" onclick="drawTest('1M')">1M</button>
-            <button class="t-btn" onclick="drawTest('5M')">5M</button>
-            <button class="t-btn" onclick="drawTest('1H')">1H</button>
-            <button class="t-btn" onclick="drawTest('1D')">1D</button>
+            <button class="t-btn" onclick="updateTimeframe('1M')">1M</button>
+            <button class="t-btn" onclick="updateTimeframe('5M')">5M</button>
+            <button class="t-btn" onclick="updateTimeframe('1H')">1H</button>
+            <button class="t-btn" onclick="updateTimeframe('1D')">1D</button>
         </div>
     </div>
 
     <script>
-        // Switch logic
+        let chart, candlestickSeries;
+
         function unlockSystem() {
             document.getElementById('landing-page').style.display = 'none';
             document.getElementById('terminal-view').style.display = 'block';
-            document.body.style.alignItems = 'center'; // Keep it centered
-            drawTest('LIVE'); 
+            initChart();
         }
 
-        const canvas = document.getElementById('chartCanvas');
-        const ctx = canvas.getContext('2d');
-        
-        // Match resolution to display
-        canvas.width = 800;
-        canvas.height = 350;
+        function initChart() {
+            chart = LightweightCharts.createChart(document.getElementById('chart-container'), {
+                layout: { backgroundColor: '#000000', textColor: '#00ff00' },
+                grid: { vertLines: { color: '#111' }, horzLines: { color: '#111' } },
+                crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
+                priceScale: { borderColor: '#333' },
+                timeScale: { borderColor: '#333', timeVisible: true }
+            });
 
-        function drawTest(timeframe) {
-            document.getElementById('status').innerText = `>> MONITORING ${timeframe} VOLUMES...`;
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            candlestickSeries = chart.addCandlestickSeries({
+                upColor: '#00ff00', downColor: '#ff0000', borderVisible: false,
+                wickUpColor: '#00ff00', wickDownColor: '#ff0000'
+            });
+
+            // DATA LOADING Logic
+            updateTimeframe('1D');
+        }
+
+        function updateTimeframe(tf) {
+            // Placeholder Market Data (Thursday) + Sunday Shadow Print
+            const data = [
+                { time: '2026-04-02', open: 150.00, high: 155.00, low: 149.00, close: 153.00 }, // Thursday
+                // Friday/Saturday are empty (Market Closed)
+                { time: '2026-04-05', open: 153.00, high: 158.00, low: 152.00, close: 157.00 }, // SUNDAY SHADOW PRINT
+            ];
             
-            // Draw a quick "Scanning" line
-            ctx.strokeStyle = '#0f0';
-            ctx.lineWidth = 2;
-            ctx.beginPath();
-            ctx.moveTo(0, 175);
-            
-            for(let i=0; i<canvas.width; i+=20) {
-                ctx.lineTo(i, 175 + (Math.random() - 0.5) * 150);
-            }
-            ctx.stroke();
+            candlestickSeries.setData(data);
+            document.getElementById('status').innerText = `>> ${tf} INTERVAL: SHADOW PRINT DETECTED`;
         }
     </script>
 </body>
