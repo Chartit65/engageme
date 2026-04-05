@@ -2,12 +2,34 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PHANTOM PRINTS | OIL TERMINAL</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>OIL TERMINAL | PHANTOM PRINTS</title>
     <style>
-        html, body { background-color: #000; margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; color: #00ff00; font-family: monospace; }
-        .header { padding: 12px; height: 20px; border-bottom: 1px solid #333; background: #000; z-index: 999; position: relative; }
-        .chart-container { height: calc(100vh - 44px); width: 100vw; }
+        /* Force the page to take up 100% of the phone screen */
+        html, body { 
+            background-color: #000; 
+            margin: 0; 
+            padding: 0; 
+            height: 100%; 
+            width: 100%; 
+            overflow: hidden; 
+            color: #00ff00; 
+            font-family: monospace; 
+        }
+        .header { 
+            height: 40px; 
+            background: #111; 
+            border-bottom: 1px solid #333; 
+            line-height: 40px; 
+            padding-left: 15px; 
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+        /* This container forces the chart to fill the remaining space */
+        .chart-container { 
+            height: calc(100% - 41px); 
+            width: 100%; 
+        }
         iframe { border: none; }
     </style>
 </head>
@@ -17,7 +39,7 @@
 
     <div class="chart-container">
         <iframe 
-            src="www.tradingview-widget.com/embed-widget/advanced-chart/?locale=en&symbol=TVC%3AUSOIL&interval=D&timezone=Etc%2FUTC&theme=dark&style=1&enable_publishing=false&hide_top_toolbar=false&allow_symbol_change=true&save_image=false&container_id=tradingview_oil" 
+            src="www.tradingview-widget.com/embed-widget/advanced-chart/?locale=en&symbol=TVC%3AUSOIL&interval=D&timezone=Etc%2FUTC&theme=dark&style=1&enable_publishing=false&hide_top_toolbar=false&allow_symbol_change=true&container_id=tradingview_oil" 
             width="100%" 
             height="100%" 
             allowfullscreen>
@@ -26,4 +48,3 @@
 
 </body>
 </html>
-2:5
