@@ -12,7 +12,7 @@
         .enter-btn:hover { background: #00ff41; color: #000; box-shadow: 0 0 25px #00ff41; }
         #terminal-interface { display: none; width: 100%; height: 100vh; flex-direction: column; padding: 15px; box-sizing: border-box; }
         .header-bar { border-bottom: 1px solid #00ff41; padding-bottom: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; font-size: 0.9rem; }
-        #chart-container { flex-grow: 1; border: 1px solid #333; background: #000; overflow: hidden; }
+        #chart-container { flex-grow: 1; border: 1px solid #333; background: #000; }
         .terminal-log { height: 160px; border-top: 1px solid #00ff41; margin-top: 10px; padding: 10px; font-size: 0.85rem; }
         .price-line { border-left: 2px solid #00ff41; padding-left: 10px; margin-bottom: 8px; }
         .fuchsia { color: #f0f; border-color: #f0f !important; }
@@ -34,13 +34,7 @@
         </div>
         
         <div id="chart-container">
-            <iframe 
-                src="s.tradingview.com/widgetembed/?frameElementId=tradingview_762ae&symbol=TVC:USOIL&interval=5&hidesidetoolbar=1&symboledit=1&saveimage=1&toolbarbg=f1f3f6&studies=[]&theme=dark&style=1&timezone=Etc%2FUTC&studies_overrides={}&overrides={}&enabled_features=[]&disabled_features=[]&locale=en&utm_source=engageme.live&utm_medium=widget&utm_campaign=chart&utm_term=TVC:USOIL" 
-                style="width: 100%; height: 100%; border: none;" 
-                scrolling="no" 
-                allowtransparency="true" 
-                allowfullscreen>
-            </iframe>
+            <div id="tv-chart-widget" style="height: 100%; width: 100%;"></div>
         </div>
 
         <div class="terminal-log">
@@ -50,10 +44,28 @@
         </div>
     </div>
 
+    <script type="text/javascript" src="s3.tradingview.com/tv.js"></script>
     <script>
         function activateTerminal() {
             document.getElementById('landing-page').style.display = 'none';
             document.getElementById('terminal-interface').style.display = 'flex';
+            
+            // Re-initializing the widget with a fresh name
+            new TradingView.widget({
+                "autosize": true,
+                "symbol": "TVC:USOIL",
+                "interval": "5",
+                "timezone": "Etc/UTC",
+                "theme": "dark",
+                "style": "1",
+                "locale": "en",
+                "toolbar_bg": "#f1f3f6",
+                "enable_publishing": false,
+                "hide_side_toolbar": false,
+                "allow_symbol_change": true,
+                "container_id": "tv-chart-widget"
+            });
+
             startClock();
         }
 
