@@ -4,19 +4,72 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EngageMe Terminal</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            background-color: #000;
+            color: #0f0;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            height: 100vh;
+            margin: 0;
+            padding-top: 50px;
+        }
+        #terminal {
+            width: 90%;
+            max-width: 800px;
+            border: 2px solid #0f0;
+            padding: 20px;
+            box-shadow: 0 0 20px #0f0;
+            background: #050505;
+        }
+        canvas {
+            width: 100%;
+            height: 400px;
+            border-bottom: 1px solid #0f0;
+            margin-bottom: 20px;
+        }
+        .controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        button {
+            background: #000;
+            color: #0f0;
+            border: 1px solid #0f0;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        button:hover {
+            background: #0f0;
+            color: #000;
+        }
+    </style>
 </head>
 <body>
+
     <div id="terminal">
-        <h1>ENGAGEME.LIVE SYSTEM ONLINE</h1>
-        <canvas id="chartCanvas" width="600" height="400"></canvas>
+        <h2 id="status">>> SYSTEM ONLINE: ENGAGEME.LIVE</h2>
+        <canvas id="chartCanvas"></canvas>
         <div class="controls">
-            <button onclick="updateTimeframe('1M')">1M</button>
-            <button onclick="updateTimeframe('5M')">5M</button>
-            <button onclick="updateTimeframe('1H')">1H</button>
-            <button onclick="updateTimeframe('1D')">1D</button>
+            <button onclick="drawTest('1M')">1M</button>
+            <button onclick="drawTest('5M')">5M</button>
+            <button onclick="drawTest('1H')">1H</button>
+            <button onclick="drawTest('1D')">1D</button>
         </div>
     </div>
-    <script src="script.js"></script>
-</body>
-</html>
+
+    <script>
+        const canvas = document.getElementById('chartCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Set internal resolution
+        canvas.width = 800;
+        canvas.height = 400;
+
+        function drawTest(timeframe) {
+            document.getElementById('status').innerText = `>> LOADING
