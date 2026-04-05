@@ -9,78 +9,158 @@
             background-color: #000;
             color: #fff;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            margin: 0;
             overflow: hidden;
             text-align: center;
         }
 
-        .container {
+        /* --- LANDING PAGE STYLE --- */
+        #landing-page {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             z-index: 2;
         }
 
         h1 {
-            font-size: 3rem;
-            letter-spacing: 0.2rem;
+            font-size: 3.5rem;
+            letter-spacing: 0.3rem;
             margin-bottom: 10px;
             text-transform: uppercase;
-            color: #fff;
-            text-shadow: 0 0 10px rgba(255,255,255,0.5);
+            text-shadow: 0 0 15px rgba(255,255,255,0.3);
         }
 
-        p {
+        .tagline {
             font-size: 1.2rem;
-            color: #888;
-            margin-bottom: 30px;
+            color: #aaa;
+            margin-bottom: 40px;
+            letter-spacing: 1px;
         }
 
-        /* The Classic Blue Button */
         .enter-button {
             background-color: #007bff;
             color: white;
-            padding: 15px 40px;
-            font-size: 1.2rem;
+            padding: 18px 50px;
+            font-size: 1.3rem;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.4);
             font-weight: bold;
             text-transform: uppercase;
+            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.4);
+            transition: all 0.3s ease;
         }
 
         .enter-button:hover {
             background-color: #0056b3;
-            box-shadow: 0 6px 20px rgba(0, 123, 255, 0.6);
-            transform: translateY(-2px);
+            transform: scale(1.05);
+            box-shadow: 0 6px 25px rgba(0, 123, 255, 0.6);
         }
 
-        /* Subtle background glow */
-        .glow {
-            position: absolute;
-            width: 300px;
-            height: 300px;
-            background: radial-gradient(circle, rgba(0,123,255,0.15) 0%, rgba(0,0,0,0) 70%);
-            z-index: 1;
+        /* --- TERMINAL STYLE (Hidden by default) --- */
+        #terminal-view {
+            display: none; 
+            width: 90%;
+            max-width: 850px;
+            border: 2px solid #0f0;
+            padding: 25px;
+            background: #050505;
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.2);
+            color: #0f0;
+            font-family: 'Courier New', Courier, monospace;
+            text-align: left;
+        }
+
+        canvas {
+            width: 100%;
+            height: 350px;
+            border-bottom: 1px solid #0f0;
+            margin-bottom: 20px;
+            background: #000;
+        }
+
+        .controls { 
+            display: flex; 
+            gap: 15px; 
+            justify-content: center; 
+        }
+
+        .t-btn {
+            background: #000; 
+            color: #0f0; 
+            border: 1px solid #0f0;
+            padding: 12px 24px; 
+            cursor: pointer;
+            font-family: inherit;
+            transition: 0.2s;
+        }
+
+        .t-btn:hover { 
+            background: #0f0; 
+            color: #000; 
+        }
+
+        #status {
+            margin-top: 0;
+            font-size: 1.2rem;
+            letter-spacing: 1px;
         }
     </style>
 </head>
 <body>
 
-    <div class="glow"></div>
-
-    <div class="container">
+    <div id="landing-page">
         <h1>ENGAGEME.LIVE</h1>
-        <p>Advanced Market Intelligence & Astral Data</p>
-        
-        <button class="enter-button" onclick="alert('System Initializing...')">
-            ENTER SYSTEM
-        </button>
+        <p class="tagline">Advanced Market Intelligence & Astral Data</p>
+        <button class="enter-button" onclick="unlockSystem()">ENTER SYSTEM</button>
     </div>
 
+    <div id="terminal-view">
+        <h2 id="status">>> INITIALIZING SECURE LINK...</h2>
+        <canvas id="chartCanvas"></canvas>
+        <div class="controls">
+            <button class="t-btn" onclick="drawTest('1M')">1M</button>
+            <button class="t-btn" onclick="drawTest('5M')">5M</button>
+            <button class="t-btn" onclick="drawTest('1H')">1H</button>
+            <button class="t-btn" onclick="drawTest('1D')">1D</button>
+        </div>
+    </div>
+
+    <script>
+        // Switch logic
+        function unlockSystem() {
+            document.getElementById('landing-page').style.display = 'none';
+            document.getElementById('terminal-view').style.display = 'block';
+            document.body.style.alignItems = 'center'; // Keep it centered
+            drawTest('LIVE'); 
+        }
+
+        const canvas = document.getElementById('chartCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Match resolution to display
+        canvas.width = 800;
+        canvas.height = 350;
+
+        function drawTest(timeframe) {
+            document.getElementById('status').innerText = `>> MONITORING ${timeframe} VOLUMES...`;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw a quick "Scanning" line
+            ctx.strokeStyle = '#0f0';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(0, 175);
+            
+            for(let i=0; i<canvas.width; i+=20) {
+                ctx.lineTo(i, 175 + (Math.random() - 0.5) * 150);
+            }
+            ctx.stroke();
+        }
+    </script>
 </body>
 </html>
