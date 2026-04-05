@@ -5,21 +5,99 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ENGAGEME.LIVE</title>
     <style>
-        body { margin: 0; background-color: #000; color: #fff; font-family: 'Arial', sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
-        .container { text-align: center; }
-        h1 { color: #007bff; font-size: 5rem; letter-spacing: 15px; text-transform: uppercase; margin: 0; }
-        p.subtitle { color: #888; font-size: 1.5rem; letter-spacing: 5px; margin-bottom: 50px; }
-        .btn-enter { background-color: #007bff; color: white; padding: 25px 80px; font-size: 2.5rem; font-weight: bold; border: none; border-radius: 10px; cursor: pointer; text-decoration: none; display: inline-block; }
-        .btn-enter:hover { background-color: #0056b3; }
-        .secure { color: #00ff41; font-size: 1.2rem; font-family: monospace; margin-top: 40px; }
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            overflow: hidden;
+        }
+
+        .landing-box {
+            text-align: center;
+            width: 95%;
+        }
+
+        h1 {
+            color: #007bff;
+            font-size: clamp(3.5rem, 12vw, 7rem); 
+            letter-spacing: 20px;
+            text-transform: uppercase;
+            margin: 0;
+            font-weight: 900;
+        }
+
+        .branding-group {
+            margin: 20px 0 60px 0;
+        }
+
+        p.slogan {
+            color: #888;
+            font-size: 1.8rem;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            margin: 10px 0;
+            font-weight: 300;
+        }
+
+        .system-status {
+            color: #00ff41;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.4rem;
+            letter-spacing: 4px;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        .btn-enter {
+            background-color: #007bff;
+            color: white;
+            padding: 25px 100px;
+            font-size: 3rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .btn-enter:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        .secure-footer {
+            margin-top: 60px;
+            color: #333;
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+            font-family: monospace;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
+
+    <div class="landing-box">
         <h1>ENGAGEME.LIVE</h1>
-        <p class="subtitle">GLOBAL NETWORKING & REAL-TIME CHAT</p>
+        
+        <div class="branding-group">
+            <p class="slogan">FUNCTIONAL TOOLS FOR THE REAL WORLD.</p>
+            <div class="system-status">SYSTEM STATUS: ONLINE</div>
+        </div>
+        
         <a href="terminal.html" class="btn-enter">ENTER</a>
-        <div class="secure">● SYSTEM SECURE</div>
+
+        <div class="secure-footer">
+            ● SECURE ENCRYPTED CONNECTION
+        </div>
     </div>
+
 </body>
 </html>
