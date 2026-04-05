@@ -1,34 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EngageMe Terminal</title>
+    <title>Phantom Oil Monitor</title>
+    <script src="cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body { 
-            background-color: black; 
-            color: #00FF00; 
-            font-family: 'Courier New', Courier, monospace; 
-            padding: 20px; 
-            margin: 0; 
-        }
-        #status-header { 
-            border-bottom: 1px solid #00FF00; 
-            margin-bottom: 20px; 
-            padding-bottom: 10px;
-        }
-        #terminal { 
-            white-space: pre-wrap; 
-            line-height: 1.6; 
-            font-size: 1.1em;
-        }
+        body { background: black; color: #00FF00; font-family: monospace; margin: 0; padding: 10px; overflow: hidden; }
+        #header { border-bottom: 1px solid #f0f; color: #f0f; padding: 5px; margin-bottom: 10px; }
+        .chart-container { position: relative; height: 80vh; width: 95vw; }
     </style>
 </head>
 <body>
-    <div id="status-header">SYSTEM: CHECKING CONNECTION...</div>
-    <div id="terminal"></div>
-
+    <div id="header">PHANTOM PRINCE OIL MONITOR: ACTIVE</div>
+    <div class="chart-container">
+        <canvas id="oilChart"></canvas>
+    </div>
     <script src="chartit65.github.io/script.js"></script>
 </body>
 </html>
-4:0
+4:06 
