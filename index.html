@@ -3,101 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ENGAGEME.LIVE</title>
-    <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            overflow: hidden;
-        }
-
-        .landing-box {
-            text-align: center;
-            width: 95%;
-        }
-
-        h1 {
-            color: #007bff;
-            font-size: clamp(3.5rem, 12vw, 7rem); 
-            letter-spacing: 20px;
-            text-transform: uppercase;
-            margin: 0;
-            font-weight: 900;
-        }
-
-        .branding-group {
-            margin: 20px 0 60px 0;
-        }
-
-        p.slogan {
-            color: #888;
-            font-size: 1.8rem;
-            letter-spacing: 6px;
-            text-transform: uppercase;
-            margin: 10px 0;
-            font-weight: 300;
-        }
-
-        .system-status {
-            color: #00ff41;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 1.4rem;
-            letter-spacing: 4px;
-            margin-top: 15px;
-            font-weight: bold;
-        }
-
-        .btn-enter {
-            background-color: #007bff;
-            color: white;
-            padding: 25px 100px;
-            font-size: 3rem;
-            font-weight: bold;
-            border: none;
-            border-radius: 15px;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-            transition: all 0.3s ease;
-        }
-
-        .btn-enter:hover {
-            background-color: #0056b3;
-            transform: scale(1.05);
-        }
-
-        .secure-footer {
-            margin-top: 60px;
-            color: #333;
-            font-size: 1.1rem;
-            letter-spacing: 2px;
-            font-family: monospace;
-        }
-    </style>
+    <title>EngageMe Terminal</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-    <div class="landing-box">
-        <h1>ENGAGEME.LIVE</h1>
-        
-        <div class="branding-group">
-            <p class="slogan">FUNCTIONAL TOOLS FOR THE REAL WORLD.</p>
-            <div class="system-status">SYSTEM STATUS: ONLINE</div>
-        </div>
-        
-        <a href="terminal.html" class="btn-enter">ENTER</a>
-
-        <div class="secure-footer">
-            ● SECURE ENCRYPTED CONNECTION
+    <div id="terminal">
+        <h1>ENGAGEME.LIVE SYSTEM ONLINE</h1>
+        <canvas id="chartCanvas" width="600" height="400"></canvas>
+        <div class="controls">
+            <button onclick="updateTimeframe('1M')">1M</button>
+            <button onclick="updateTimeframe('5M')">5M</button>
+            <button onclick="updateTimeframe('1H')">1H</button>
+            <button onclick="updateTimeframe('1D')">1D</button>
         </div>
     </div>
-
+    <script src="script.js"></script>
 </body>
 </html>
