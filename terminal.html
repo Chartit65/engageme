@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WTI SHADOW TERMINAL</title>
+    <script src="unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
+    <style>
+        body { margin: 0; background: #000; padding: 15px; font-family: 'Courier New', Courier, monospace; color: #007bff; overflow: hidden; }
+        .terminal-interface { display: flex; flex-direction: column; height: 100vh; }
+        .terminal-header {
+            display: flex; justify-content: space-between; align-items: center;
+            background-color: #0d0d0d; padding: 10px 20px; border-bottom: 2px solid #222;
+        }
+        .header-title { font-size: 2rem; font-weight: 900; letter-spacing: 5px; text-transform: uppercase; margin: 0; }
+        .status-online { color: #00ff41; font-weight: bold; font-size: 1.1rem; }
+        #tv-chart-container { flex-grow: 1; width: 100%; margin-top: 15px; border: 1px solid #222; border-radius: 6px; }
+        .back-link { color: #444; text-decoration: none; font-size: 0.9rem; margin-top: 5px; display: inline-block;}
+    </style>
+</head>
+<body>
+    <div class="terminal-interface">
+        <div class="terminal-header">
+            <div>
+                <h1 class="header-title">WTI SHADOW TERMINAL</h1>
+                <a href="index.html" class="back-link">← EXIT SESSION</a>
+            </div>
+            <div style="text-align: right;">
+                <div class="status-online">SYSTEM STATUS: ONLINE</div>
+                <div style="color: #666; font-size: 0.8rem;">REAL-TIME SHADOW FEED</div>
+            </div>
+        </div>
+        <div id="tv-chart-container"></div>
+    </div>
+
+    <script>
+        const container = document.getElementById('tv-chart-container');
+        const chart = LightweightCharts.createChart(container, {
+            width: container.clientWidth,
+            height: window.innerHeight - 100,
+            layout: { backgroundColor: '#000000', textColor: '#d1d4dc', fontFamily: "'Courier New', Courier, monospace" },
+            grid: { vertLines: { color: '#111' }, horzLines: { color: '#111' } },
+            timeScale: { borderColor: '#333', timeVisible: true, rightOffset: 12 },
+            priceScale: { borderColor: '#333' },
+        });
+
+        const candleSeries = chart.addCandlestickSeries({
+            upColor: '#00ff41', downColor: '#ff4949', borderVisible: false,
+            wickUpColor: '#00ff41', wickDownColor: '#ff4949',
+        });
+
+        // SESSION DATA: Locked to your chart photo
+        candleSeries.setData([
+            { time: '2026-03-20', open: 96.20, high: 98.20, low: 94.10, close: 95.80 },
+            { time: '2026-03-24', open: 92.40, high: 94.00, low: 84.37, close: 88.20 }, // THE LOW
+            { time: '2026-03-27', open: 88.20, high: 99.40, low: 88.10, close: 98.20 },
+            { time: '2026-03-31', open: 98.20, high: 105.50, low: 98.00, close: 104.50 },
+            { time: '2026-04-02', open: 104.50, high: 112.07, low: 104.20, close: 112.06 } // THURSDAY CLOSE
+        ]);
