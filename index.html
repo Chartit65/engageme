@@ -1,16 +1,70 @@
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>ENGAGEME.LIVE | Terminal</title>
-        <style>
-            body, html { margin: 0; padding: 0; background: #050505; color: #00ff41; font-family: 'Courier New', monospace; height: 100%; width: 100%; overflow: hidden; }
-            #landing-page { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
-            h1 { color: #fff; letter-spacing: 10px; font-size: 2.5rem; text-shadow: 0 0 15px #00ff41; }
-            .enter-btn { padding: 15px 40px; background: rgba(0, 20, 50, 0.3); border: 2px solid #00ff41; color: #00ff41; cursor: pointer; text-transform: uppercase; font-weight: bold; box-shadow: 0 0 10px rgba(0, 255, 65, 0.5); transition: 0.3s; margin-top: 20px; }
-            .enter-btn:hover { background: #00ff41; color: #000; box-shadow: 0 0 25px #00ff41; }
-            
-            #terminal-interf…
-    6:18 PM
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ENGAGEME.LIVE | Terminal</title>
+    <style>
+        body, html { margin: 0; padding: 0; background: #050505; color: #00ff41; font-family: 'Courier New', monospace; height: 100%; width: 100%; overflow: hidden; }
+        #landing-page { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+        h1 { color: #fff; letter-spacing: 10px; font-size: 2.5rem; text-shadow: 0 0 15px #00ff41; }
+        .enter-btn { padding: 15px 40px; background: rgba(0, 20, 50, 0.3); border: 2px solid #00ff41; color: #00ff41; cursor: pointer; text-transform: uppercase; font-weight: bold; box-shadow: 0 0 10px rgba(0, 255, 65, 0.5); transition: 0.3s; margin-top: 20px; }
+        .enter-btn:hover { background: #00ff41; color: #000; box-shadow: 0 0 25px #00ff41; }
+        
+        #terminal-interface { display: none; width: 100%; height: 100vh; flex-direction: column; padding: 15px; box-sizing: border-box; }
+        .header-bar { border-bottom: 1px solid #00ff41; padding-bottom: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; font-size: 0.9rem; }
+        
+        #chart-container { flex-grow: 1; border: 1px solid #333; background: #000; position: relative; }
+        
+        .terminal-log { height: 160px; border-top: 1px solid #00ff41; margin-top: 10px; padding: 10px; font-size: 0.85rem; }
+        .price-line { border-left: 2px solid #00ff41; padding-left: 10px; margin-bottom: 8px; }
+        .fuchsia { color: #f0f; border-color: #f0f !important; }
+        .blink { animation: blinker 1.5s linear infinite; }
+        @keyframes blinker { 50% { opacity: 0; } }
+    </style>
+</head>
+<body>
 
+    <div id="landing-page">
+        <h1>ENGAGEME.LIVE</h1>
+        <button class="enter-btn" onclick="activateTerminal()">ENTER TERMINAL</button>
+    </div>
+
+    <div id="terminal-interface">
+        <div class="header-bar">
+            <span>SYS: PHANTOM PRINCE | STATUS: SECURE</span>
+            <span id="clock"></span>
+        </div>
+        
+        <div id="chart-container">
+            <iframe 
+                id="tradingview_iframe"
+                src="s.tradingview.com/widgetembed/?symbol=TVC:USOIL&interval=5&theme=dark&style=1&timezone=Etc%2FUTC&locale=en" 
+                style="width: 100%; height: 100%; border: none;" 
+                scrolling="no" 
+                allowfullscreen>
+            </iframe>
+        </div>
+
+        <div class="terminal-log">
+            <div class="price-line"><span style="color:#fff">THU: 112.06</span><br><span style="color:#666; font-size:0.7rem;">[ CLOSING PRINT ]</span></div>
+            <div class="price-line"><span style="color:#fff">FRI: 112.25</span><br><span style="color:#666; font-size:0.7rem;">[ WEEKEND SETTLE / POST ]</span></div>
+            <div class="price-line fuchsia"><span style="color:#f0f">SUN: 112.65</span><br><span class="blink" style="color:#f0f; font-size:0.7rem;">[ OPENING INDICATIVE / PRE-MARKET ]</span></div>
+        </div>
+    </div>
+
+    <script>
+        function activateTerminal() {
+            document.getElementById('landing-page').style.display = 'none';
+            document.getElementById('terminal-interface').style.display = 'flex';
+            startClock();
+        }
+
+        function startClock() {
+            const today = new Date();
+            document.getElementById('clock').innerHTML = today.toLocaleTimeString();
+            setTimeout(startClock, 1000);
+        }
+    </script>
+</body>
+</html>
