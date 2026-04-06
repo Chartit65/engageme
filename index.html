@@ -12,7 +12,7 @@
         /* PAGE 1: SPLASH */
         #page-one { 
             display: flex; flex-direction: column; justify-content: center; align-items: center; 
-            height: 100vh; width: 100%; position: absolute; z-index: 10; background: #000; 
+            height: 100vh; width: 100%; position: absolute; z-index: 100; background: #000; 
         }
         /* PAGE 2: TERMINAL */
         #page-two { 
@@ -22,11 +22,13 @@
             border: 2px solid #00FF41; padding: 20px 40px; color: #00FF41; 
             font-size: 24px; cursor: pointer; background: transparent; font-weight: bold; 
         }
-        header { padding: 15px; border-bottom: 2px solid #00FF41; text-align: center; }
-        #chart-container { flex-grow: 1; background: #000; height: 70vh; }
+        header { padding: 15px; border-bottom: 2px solid #00FF41; text-align: center; font-weight: bold; }
+        
+        /* THE CHART FIX */
+        .tradingview-widget-container { flex-grow: 1; width: 100%; background: #000; }
+        
         footer { padding: 15px; border-top: 2px solid #00FF41; display: flex; justify-content: space-around; background: #050505; }
         .pink { color: #FF00FF; }
-        iframe { width: 100%; height: 100%; border: none; }
     </style>
 </head>
 <body>
@@ -39,9 +41,26 @@
 
     <div id="page-two">
         <header>SYS: PHANTOM PRINCE // ACTIVE FEED</header>
-        <div id="chart-container">
-            <iframe src="s.tradingview.com/widgetembed/?symbol=TVC%3AUSOIL&interval=60&theme=dark&style=1&timezone=Etc%2FUTC&locale=en"></iframe>
+        
+        <div class="tradingview-widget-container">
+            <div id="tradingview_chart"></div>
+            <script type="text/javascript" src="s3.tradingview.com/tv.js"></script>
+            <script type="text/javascript">
+              new TradingView.widget({
+              "autosize": true,
+              "symbol": "TVC:USOIL",
+              "interval": "60",
+              "timezone": "Etc/UTC",
+              "theme": "dark",
+              "style": "1",
+              "locale": "en",
+              "enable_publishing": false,
+              "allow_symbol_change": true,
+              "container_id": "tradingview_chart"
+            });
+            </script>
         </div>
+
         <footer>
             <div>THU: 112.06</div>
             <div>FRI: 112.25</div>
