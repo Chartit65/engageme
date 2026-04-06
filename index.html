@@ -14,9 +14,8 @@
         #terminal { display: none; flex-direction: column; height: 100vh; }
         header { padding: 10px; border-bottom: 2px solid #00FF41; text-align: center; font-size: 20px; font-weight: bold; }
         
-        /* THE CHART FRAME */
-        .chart-container { flex-grow: 1; border-bottom: 2px solid #00FF41; background: #000; }
-        iframe { width: 100%; height: 100%; border: none; }
+        /* CHART CONTAINER */
+        .chart-container { flex-grow: 1; border-bottom: 2px solid #00FF41; background: #000; position: relative; }
         
         .footer-ticker { padding: 15px; background: #050505; }
         .data-row { font-size: 16px; font-weight: bold; margin: 4px 0; letter-spacing: 1px; }
@@ -35,8 +34,27 @@
         <header>SYS: PHANTOM PRINCE // LIVE WTI FEED</header>
         
         <div class="chart-container">
-            <iframe src="s.tradingview.com/widgetembed/?frameElementId=tradingview_762ae&symbol=TVC:USOIL&interval=60&hidesidetoolbar=0&symboledit=1&saveimage=1&toolbarbg=f1f3f6&studies=[]&theme=dark&style=1&timezone=Etc%2FUTC&studies_overrides={}&overrides={}&enabled_features=[]&disabled_features=[]&locale=en&utm_source=engageme.live&utm_medium=widget&utm_campaign=chart&utm_term=TVC:USOIL"></iframe>
-        </div>
+            <div class="tradingview-widget-container" style="height:100%;width:100%">
+                <div id="tradingview_chart" style="height:100%;width:100%"></div>
+                <script type="text/javascript" src="s3.tradingview.com/tv.js"></script>
+                <script type="text/javascript">
+                new TradingView.widget({
+                    "autosize": true,
+                    "symbol": "TVC:USOIL",
+                    "interval": "60",
+                    "timezone": "Etc/UTC",
+                    "theme": "dark",
+                    "style": "1",
+                    "locale": "en",
+                    "toolbar_bg": "#f1f3f6",
+                    "enable_publishing": false,
+                    "hide_side_toolbar": false,
+                    "allow_symbol_change": true,
+                    "container_id": "tradingview_chart"
+                });
+                </script>
+            </div>
+            </div>
 
         <div class="footer-ticker">
             <div class="data-row">THU: 112.06 | FRI: 112.25</div>
@@ -49,6 +67,8 @@
         function runTerminal() {
             document.getElementById('landing').style.display = 'none';
             document.getElementById('terminal').style.display = 'flex';
+            // Force a resize event to make sure the chart fills the box properly
+            window.dispatchEvent(new Event('resize'));
         }
     </script>
 </body>
