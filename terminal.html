@@ -2,49 +2,80 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>PHANTOM PRINCE | ENTER</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TERMINAL | WTI MONITOR</title>
     <style>
+        /* FULLY SELF-CONTAINED // NO EXTERNAL FOLDERS */
         body { 
             background: #000; 
             color: #00FF41; 
             font-family: 'Courier New', monospace; 
+            margin: 0; 
             height: 100vh; 
             display: flex; 
             flex-direction: column; 
+            justify-content: space-between; 
+            text-transform: uppercase;
+            overflow: hidden;
+        }
+        header { 
+            padding: 20px; 
+            border-bottom: 2px solid #00FF41; 
+            text-align: center; 
+            letter-spacing: 3px;
+            background: #000;
+        }
+        .main-display { 
+            flex-grow: 1; 
+            display: flex; 
             justify-content: center; 
             align-items: center; 
-            margin: 0; 
-            text-transform: uppercase;
         }
-        .title { 
-            font-size: 42px; 
+        .phantom-frame { 
+            border: 1px solid #00FF41; 
+            padding: 50px; 
+            background: rgba(0, 255, 65, 0.05); 
+            text-align: center; 
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.1);
+        }
+        .ticker-section { 
+            background: #050505; 
+            border-top: 2px solid #00FF41; 
+            padding: 25px; 
+        }
+        .data-line { 
             font-weight: bold; 
-            letter-spacing: 12px; 
-            margin-bottom: 10px; 
+            font-size: 1.25em; 
+            margin: 6px 0; 
+            letter-spacing: 1px;
         }
-        .subtitle { 
-            color: #888; 
-            margin-bottom: 50px; 
-            letter-spacing: 2px;
-        }
-        .enter-btn { 
-            border: 2px solid #00FF41; 
-            padding: 20px 40px; 
-            color: #00FF41; 
-            text-decoration: none; 
-            font-size: 1.5em; 
-            transition: 0.4s; 
-        }
-        .enter-btn:hover { 
-            background: #00FF41; 
-            color: #000; 
-            box-shadow: 0 0 30px #00FF41; 
-        }
+        .highlight { color: #FFFF00; } /* Yellow for critical status */
+        .pink { color: #FF00FF; } /* Pink for Sunday prints */
     </style>
 </head>
 <body>
-    <div class="title">PHANTOM PRINCE</div>
-    <div class="subtitle">WTI CRUDE PROTOCOL // EST. 1965</div>
-    <a href="terminal.html" class="enter-btn">ENTER TERMINAL</a>
+
+    <header>
+        <div style="font-size: 28px; font-weight: bold;">SYS: PHANTOM PRINCE // TERMINAL ACTIVE</div>
+        <div style="font-size: 13px; color: #888; margin-top: 5px;">WTI CRUDE // POST-THURSDAY PROTOCOL</div>
+    </header>
+
+    <div class="main-display">
+        <div class="phantom-frame">
+            <p>THURSDAY CHARGE: <span class="highlight">COMPLETE</span></p>
+            <p>OIL STATUS: <span class="highlight">WAITING FOR PHANTOM BLOCKS</span></p>
+            <p style="font-size: 2.5em; margin-top: 30px; letter-spacing: 10px;">[ STANDBY ]</p>
+        </div>
+    </div>
+
+    <div class="ticker-section">
+        <div class="data-line">THU: 112.06 [CLOSE]</div>
+        <div class="data-line">FRI: 112.25 [SETTLE]</div>
+        <div class="data-line" style="border-left: 5px solid #FF00FF; padding-left: 10px;">
+            <span class="pink">SUN: 112.65 [SUN PRINT]</span>
+        </div>
+        <div class="data-line">LIVE: 113.15 [MONITORING BREAKOUT]</div>
+    </div>
+
 </body>
 </html>
