@@ -2,27 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PHANTOM PRINCE | TERMINAL</title>
+    <script type="text/javascript" src="s3.tradingview.com/tv.js"></script>
     <style>
-        body { background: #000; color: #00FF41; font-family: monospace; margin: 0; height: 100vh; overflow: hidden; text-transform: uppercase; }
-        
-        /* THE SPLASH OVERLAY */
-        #splash { 
-            display: flex; flex-direction: column; justify-content: center; align-items: center; 
-            height: 100vh; width: 100%; position: absolute; top: 0; left: 0; z-index: 100; background: #000; 
-        }
-        
-        /* THE TERMINAL HUB (Behind the splash) */
-        #terminal { 
-            display: flex; flex-direction: column; height: 100vh; width: 100%; position: relative; z-index: 10;
-        }
-
+        body { background: #000; color: #00FF41; font-family: monospace; margin: 0; overflow: hidden; text-transform: uppercase; }
+        #splash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        #terminal { display: flex; flex-direction: column; height: 100vh; width: 100%; visibility: hidden; }
         .enter-btn { border: 2px solid #00FF41; padding: 20px 40px; color: #00FF41; font-size: 24px; cursor: pointer; background: transparent; font-weight: bold; }
         header { padding: 15px; border-bottom: 2px solid #00FF41; text-align: center; }
-        .chart-box { flex-grow: 1; width: 100%; background: #000; }
-        iframe { width: 100%; height: 100%; border: none; }
-        footer { padding: 15px; border-top: 2px solid #00FF41; display: flex; justify-content: space-around; background: #050505; font-size: 12px; }
+        #chart-viewport { flex-grow: 1; width: 100%; }
+        footer { padding: 15px; border-top: 2px solid #00FF41; display: flex; justify-content: space-around; background: #050505; }
         .pink { color: #FF00FF; }
     </style>
 </head>
@@ -31,14 +21,12 @@
     <div id="splash">
         <h1 style="letter-spacing: 10px;">PHANTOM PRINCE</h1>
         <p style="color: #444; margin-bottom: 30px;">WTI CRUDE PROTOCOL</p>
-        <button class="enter-btn" onclick="document.getElementById('splash').style.display='none';">ENTER TERMINAL</button>
+        <button class="enter-btn" onclick="showTerminal()">ENTER TERMINAL</button>
     </div>
 
     <div id="terminal">
         <header>SYS: PHANTOM PRINCE // ACTIVE MONITOR</header>
-        <div class="chart-box">
-            <iframe src="www.tradingview-widget.com/embed-widget/advanced-chart/?symbol=TVC%3AUSOIL&interval=60&theme=dark&style=1&timezone=Etc%2FUTC&locale=en" allowfullscreen></iframe>
-        </div>
+        <div id="chart-viewport"></div>
         <footer>
             <div>THU: 112.06</div>
             <div>FRI: 112.25</div>
@@ -46,5 +34,28 @@
         </footer>
     </div>
 
+    <script type="text/javascript">
+        // STEP 2: INITIALIZE IMMEDIATELY IN THE BACKGROUND
+        var widget = new TradingView.widget({
+            "autosize": true,
+            "symbol": "TVC:USOIL",
+            "interval": "60",
+            "timezone": "Etc/UTC",
+            "theme": "dark",
+            "style": "1",
+            "locale": "en",
+            "container_id": "chart-viewport",
+            "enable_publishing": false,
+            "hide_side_toolbar": false,
+            "allow_symbol_change": true
+        });
+
+        function showTerminal() {
+            document.getElementById('splash').style.display = 'none';
+            document.getElementById('terminal').style.visibility = 'visible';
+            // Trigger a resize to make sure the chart fills the screen
+            window.dispatchEvent(new Event('resize'));
+        }
+    </script>
 </body>
 </html>
