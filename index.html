@@ -11,8 +11,8 @@
         }
         /* PAGE 1: THE GATE */
         #portal {
-            display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh;
-            position: absolute; width: 100%; z-index: 10; background: #000;
+            display: flex; flex-direction: column; justify-content: center; align-items: center; 
+            height: 100vh; width: 100%; position: absolute; z-index: 100; background: #000;
         }
         .enter-btn { 
             border: 2px solid #00FF41; padding: 25px 50px; color: #00FF41; 
@@ -21,18 +21,16 @@
         }
         .enter-btn:hover { background: #00FF41; color: #000; box-shadow: 0 0 30px #00FF41; }
 
-        /* PAGE 2: THE MONITOR */
+        /* PAGE 2: THE HUB */
         #hub {
-            display: flex; flex-direction: column; height: 100vh; visibility: hidden;
+            display: none; flex-direction: column; height: 100vh; width: 100%;
         }
         header { padding: 15px; border-bottom: 2px solid #00FF41; text-align: center; font-size: 20px; font-weight: bold; }
-        
-        .viewer { flex-grow: 1; background: #000; border-bottom: 2px solid #00FF41; }
-        iframe { width: 100%; height: 100%; border: none; }
-        
-        .footer-ticker { padding: 15px; background: #050505; display: flex; justify-content: space-around; }
+        .viewer-container { flex-grow: 1; background: #000; position: relative; }
+        .footer-ticker { border-top: 2px solid #00FF41; padding: 15px; background: #050505; display: flex; justify-content: space-around; }
         .data-row { font-size: 14px; font-weight: bold; }
         .pink { color: #FF00FF; }
+        #version-tag { position: absolute; bottom: 5px; right: 5px; color: #222; font-size: 10px; }
     </style>
 </head>
 <body>
@@ -40,16 +38,13 @@
     <div id="portal">
         <h1 style="letter-spacing: 15px; font-size: 45px; margin-bottom: 10px;">PHANTOM PRINCE</h1>
         <p style="color: #444; margin-bottom: 50px; letter-spacing: 2px;">WTI CRUDE PROTOCOL // 1965</p>
-        <button class="enter-btn" onclick="revealHub()">ENTER TERMINAL</button>
+        <button class="enter-btn" onclick="openSystem()">ENTER TERMINAL</button>
+        <div id="version-tag">SYS_VER_1.0.1</div>
     </div>
 
     <div id="hub">
         <header>SYS: PHANTOM PRINCE // ACTIVE MONITOR</header>
-        
-        <div class="viewer">
-            <iframe src="s.tradingview.com/widgetembed/?symbol=TVC%3AUSOIL&interval=60&hidesidetoolbar=0&symboledit=1&saveimage=1&toolbarbg=f1f3f6&theme=dark&style=1&timezone=Etc%2FUTC&studies=%5B%5D&hide_top_toolbar=0&locale=en"></iframe>
-        </div>
-
+        <div class="viewer-container" id="wti-chart"></div>
         <div class="footer-ticker">
             <div class="data-row">THU: 112.06</div>
             <div class="data-row">FRI: 112.25</div>
@@ -57,11 +52,25 @@
         </div>
     </div>
 
+    <script type="text/javascript" src="s3.tradingview.com/tv.js"></script>
     <script>
-        function revealHub() {
-            // Simply remove the curtain
+        function openSystem() {
             document.getElementById('portal').style.display = 'none';
-            document.getElementById('hub').style.visibility = 'visible';
+            document.getElementById('hub').style.display = 'flex';
+            new TradingView.widget({
+                "autosize": true,
+                "symbol": "TVC:USOIL",
+                "interval": "60",
+                "timezone": "Etc/UTC",
+                "theme": "dark",
+                "style": "1",
+                "locale": "en",
+                "toolbar_bg": "#f1f3f6",
+                "enable_publishing": false,
+                "hide_side_toolbar": false,
+                "allow_symbol_change": true,
+                "container_id": "wti-chart"
+            });
         }
     </script>
 </body>
