@@ -3,59 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PHANTOM PRINCE | TERMINAL</title>
-    <script type="text/javascript" src="s3.tradingview.com/tv.js"></script>
+    <title>PHANTOM PRINCE | UNLIMITED ENGINE</title>
     <style>
-        body { background: #000; color: #00FF41; font-family: monospace; margin: 0; overflow: hidden; text-transform: uppercase; }
-        #splash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        #terminal { display: flex; flex-direction: column; height: 100vh; width: 100%; visibility: hidden; }
-        .enter-btn { border: 2px solid #00FF41; padding: 20px 40px; color: #00FF41; font-size: 24px; cursor: pointer; background: transparent; font-weight: bold; }
-        header { padding: 15px; border-bottom: 2px solid #00FF41; text-align: center; }
-        #chart-viewport { flex-grow: 1; width: 100%; }
-        footer { padding: 15px; border-top: 2px solid #00FF41; display: flex; justify-content: space-around; background: #050505; }
+        body { background: #000; color: #00FF41; font-family: monospace; margin: 0; text-transform: uppercase; }
+        #terminal { padding: 20px; height: 100vh; display: flex; flex-direction: column; }
+        header { border-bottom: 2px solid #00FF41; padding: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; }
+        
+        /* DATA DISPLAY */
+        .price-engine { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; border: 1px solid #222; }
+        #ticker { color: #888; font-size: 1.5em; letter-spacing: 5px; }
+        #price { font-size: 6em; font-weight: bold; margin: 10px 0; }
+        #change { font-size: 1.5em; }
+
+        .status-footer { border-top: 1px solid #222; padding: 15px; display: flex; justify-content: space-around; font-size: 0.8em; }
         .pink { color: #FF00FF; }
+        .up { color: #00FF41; } .down { color: #FF0000; }
     </style>
 </head>
 <body>
 
-    <div id="splash">
-        <h1 style="letter-spacing: 10px;">PHANTOM PRINCE</h1>
-        <p style="color: #444; margin-bottom: 30px;">WTI CRUDE PROTOCOL</p>
-        <button class="enter-btn" onclick="showTerminal()">ENTER TERMINAL</button>
-    </div>
-
     <div id="terminal">
-        <header>SYS: PHANTOM PRINCE // ACTIVE MONITOR</header>
-        <div id="chart-viewport"></div>
-        <footer>
-            <div>THU: 112.06</div>
-            <div>FRI: 112.25</div>
-            <div class="pink">SUN PRINT: 112.65</div>
-        </footer>
+        <header>
+            <span>PHANTOM PRINCE // v1.50</span>
+            <span id="clock">00:00:00</span>
+        </header>
+
+        <div class="price-engine">
+            <div id="ticker">WTI CRUDE FUTURE (NYM)</div>
+            <div id="price">LOADING...</div>
+            <div id="change">--.--%</div>
+        </div>
+
+        <div class="status-footer">
+            <div>SLAUGHTER: <span class="pink">ARMED</span></div>
+            <div>POST-SLAUGHTER: <span class="pink">READY</span></div>
+            <div>BNRG: <span class="pink">FILTERED</span></div>
+        </div>
     </div>
 
-    <script type="text/javascript">
-        // STEP 2: INITIALIZE IMMEDIATELY IN THE BACKGROUND
-        var widget = new TradingView.widget({
-            "autosize": true,
-            "symbol": "TVC:USOIL",
-            "interval": "60",
-            "timezone": "Etc/UTC",
-            "theme": "dark",
-            "style": "1",
-            "locale": "en",
-            "container_id": "chart-viewport",
-            "enable_publishing": false,
-            "hide_side_toolbar": false,
-            "allow_symbol_change": true
-        });
+    <script>
+        // Update the clock
+        setInterval(() => {
+            document.getElementById('clock').innerText = new Date().toLocaleTimeString();
+        }, 1000);
 
-        function showTerminal() {
-            document.getElementById('splash').style.display = 'none';
-            document.getElementById('terminal').style.visibility = 'visible';
-            // Trigger a resize to make sure the chart fills the screen
-            window.dispatchEvent(new Event('resize'));
+        async function getOilPrice() {
+            try {
+                // We are targeting Yahoo Finance's public JSON data for Crude Oil (CL=F)
+                // This bypasses the need for a private API Key.
+                const targetUrl = "query1.finance.yahoo.com/v8/finance/chart/CL=F?interval=1m&range=1d";
+                const proxyUrl = "corsproxy.io/?" + encodeURIComponent(targetUrl);
+
+                const response = await fetch(proxyUrl);
+                const data = await response.json();
+                
+                const meta = data.chart.result[0].meta;
+                const currentPrice = meta.regularMarketPrice.toFixed(2);
+                const prevClose = meta.previousClose;
+                const change = (((currentPrice - prevClose) / prevClose) * 100).toFixed(2);
+
+                // Update UI
+                const priceEl = document.getElementById('price');
+                const changeEl = document.getElementById('change');
+
+                priceEl.innerText = `$${currentPrice}`;
+                changeEl.innerText = `${change > 0 ? '+' : ''}${change}%`;
+                changeEl.className = change >= 0 ? 'up' : 'down';
+
+            } catch (error) {
+                console.log("Sync Error - Retrying...");
+            }
         }
+
+        // POLLING: Every 5 seconds. (Unlimited calls because it's a public query)
+        setInterval(getOilPrice, 5000);
+        getOilPrice();
     </script>
 </body>
 </html>
