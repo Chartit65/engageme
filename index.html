@@ -24,9 +24,8 @@
         }
         header { padding: 15px; border-bottom: 2px solid #00FF41; text-align: center; font-weight: bold; }
         
-        /* THE CHART FIX: USING THE PUBLIC-FACING SYMBOL URL */
-        .chart-window { flex-grow: 1; width: 100%; background: #000; }
-        iframe { width: 100%; height: 100%; border: none; }
+        /* THE CHART AREA */
+        .chart-window { flex-grow: 1; width: 100%; background: #000; overflow-y: auto; }
         
         footer { padding: 15px; border-top: 2px solid #00FF41; display: flex; justify-content: space-around; background: #050505; }
         .pink { color: #FF00FF; }
@@ -43,7 +42,22 @@
     <div id="page-two">
         <header>SYS: PHANTOM PRINCE // ACTIVE MONITOR</header>
         <div class="chart-window">
-            <iframe src="www.tradingview.com/chart/?symbol=TVC%3AUSOIL&interval=60&theme=dark" allowfullscreen></iframe>
+            <div class="tradingview-widget-container" style="height:100%;width:100%">
+              <div class="tradingview-widget-container__widget"></div>
+              <script type="text/javascript" src="s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>
+              {
+              "interval": "1h",
+              "width": "100%",
+              "isTransparent": false,
+              "height": "100%",
+              "symbol": "TVC:USOIL",
+              "showIntervalTabs": true,
+              "displayMode": "single",
+              "locale": "en",
+              "colorTheme": "dark"
+            }
+              </script>
+            </div>
         </div>
         <footer>
             <div>THU: 112.06</div>
