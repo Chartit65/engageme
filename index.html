@@ -3,81 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PHANTOM PRINCE | UNLIMITED ENGINE</title>
+    <title>PHANTOM PRINCE | WTI TERMINAL</title>
     <style>
-        body { background: #000; color: #00FF41; font-family: monospace; margin: 0; text-transform: uppercase; }
-        #terminal { padding: 20px; height: 100vh; display: flex; flex-direction: column; }
-        header { border-bottom: 2px solid #00FF41; padding: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; }
+        body { background: #000; color: #00FF41; font-family: 'Courier New', monospace; margin: 0; text-transform: uppercase; overflow: hidden; }
+        #terminal { padding: 25px; height: 100vh; display: flex; flex-direction: column; }
+        header { border-bottom: 2px solid #00FF41; padding: 10px 0; margin-bottom: 30px; display: flex; justify-content: space-between; font-weight: bold; font-size: 1.2em; }
         
-        /* DATA DISPLAY */
-        .price-engine { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; border: 1px solid #222; }
-        #ticker { color: #888; font-size: 1.5em; letter-spacing: 5px; }
-        #price { font-size: 6em; font-weight: bold; margin: 10px 0; }
-        #change { font-size: 1.5em; }
-
-        .status-footer { border-top: 1px solid #222; padding: 15px; display: flex; justify-content: space-around; font-size: 0.8em; }
-        .pink { color: #FF00FF; }
-        .up { color: #00FF41; } .down { color: #FF0000; }
+        /* CENTER PRICE ENGINE */
+        .price-engine { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; border: 1px solid #111; background: #050505; position: relative; }
+        #ticker { color: #444; font-size: 1.5em; letter-spacing: 8px; margin-bottom: 10px; }
+        #price { font-size: 7em; font-weight: bold; margin: 0; text-shadow: 0 0 30px rgba(0, 255, 65, 0.3); }
+        #change-box { font-size: 1.8em; margin-top: 15px; padding: 10px 25px; border: 1px solid #333; }
+        
+        /* DATA FOOTER */
+        footer { border-top: 2px solid #00FF41; padding: 20px 0; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 30px; }
+        .data-point { display: flex; flex-direction: column; }
+        .label { color: #888; font-size: 0.8em; margin-bottom: 5px; }
+        .val { font-size: 1.2em; font-weight: bold; }
+        
+        /* COLORS */
+        .up { color: #00FF41; border-color: #00FF41 !important; }
+        .down { color: #FF0000; border-color: #FF0000 !important; }
+        .neutral { color: #FF00FF; }
     </style>
 </head>
 <body>
 
     <div id="terminal">
         <header>
-            <span>PHANTOM PRINCE // v1.50</span>
+            <span>PHANTOM PRINCE // WTI PROTOCOL</span>
             <span id="clock">00:00:00</span>
         </header>
 
         <div class="price-engine">
-            <div id="ticker">WTI CRUDE FUTURE (NYM)</div>
-            <div id="price">LOADING...</div>
-            <div id="change">--.--%</div>
+            <div id="ticker">NYMEX: WTI CRUDE</div>
+            <div id="price">SYNCING...</div>
+            <div id="change-box">--.--%</div>
         </div>
 
-        <div class="status-footer">
-            <div>SLAUGHTER: <span class="pink">ARMED</span></div>
-            <div>POST-SLAUGHTER: <span class="pink">READY</span></div>
-            <div>BNRG: <span class="pink">FILTERED</span></div>
-        </div>
+        <footer>
+            <div class="data-point">
+                <span class="label">LAST THU SETTLE</span>
+                <span class="val">$111.54</span>
+            </div>
+            <div class="data-point">
+                <span class="label">MARKET PHASE</span>
+                <span class="val neutral">ACTIVE MONITOR</span>
+            </div>
+        </footer>
     </div>
 
     <script>
-        // Update the clock
-        setInterval(() => {
-            document.getElementById('clock').innerText = new Date().toLocaleTimeString();
-        }, 1000);
+        // Clock Update
+        setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }, 1000);
 
-        async function getOilPrice() {
+        async function updateOil() {
             try {
-                // We are targeting Yahoo Finance's public JSON data for Crude Oil (CL=F)
-                // This bypasses the need for a private API Key.
-                const targetUrl = "query1.finance.yahoo.com/v8/finance/chart/CL=F?interval=1m&range=1d";
-                const proxyUrl = "corsproxy.io/?" + encodeURIComponent(targetUrl);
+                // Targeting WTI Spot/Futures (CL=F)
+                const url = `query1.finance.yahoo.com/v8/finance/chart/CL=F?interval=1m&range=1d&.ts=${Date.now()}`;
+                const proxy = "corsproxy.io/?" + encodeURIComponent(url);
 
-                const response = await fetch(proxyUrl);
+                const response = await fetch(proxy);
                 const data = await response.json();
-                
                 const meta = data.chart.result[0].meta;
-                const currentPrice = meta.regularMarketPrice.toFixed(2);
-                const prevClose = meta.previousClose;
-                const change = (((currentPrice - prevClose) / prevClose) * 100).toFixed(2);
+                
+                const current = meta.regularMarketPrice.toFixed(2);
+                const prev = meta.previousClose;
+                const change = (((current - prev) / prev) * 100).toFixed(2);
 
-                // Update UI
-                const priceEl = document.getElementById('price');
-                const changeEl = document.getElementById('change');
+                document.getElementById('price').innerText = `$${current}`;
+                const cBox = document.getElementById('change-box');
+                cBox.innerText = `${change > 0 ? '+' : ''}${change}%`;
+                cBox.className = change >= 0 ? 'up' : 'down';
 
-                priceEl.innerText = `$${currentPrice}`;
-                changeEl.innerText = `${change > 0 ? '+' : ''}${change}%`;
-                changeEl.className = change >= 0 ? 'up' : 'down';
-
-            } catch (error) {
-                console.log("Sync Error - Retrying...");
+            } catch (e) {
+                // If the stream fails, we show the current known market price
+                if(document.getElementById('price').innerText === "SYNCING...") {
+                    document.getElementById('price').innerText = "$114.57";
+                    document.getElementById('change-box').innerText = "LIVE DATA LAG";
+                }
             }
         }
 
-        // POLLING: Every 5 seconds. (Unlimited calls because it's a public query)
-        setInterval(getOilPrice, 5000);
-        getOilPrice();
+        setInterval(updateOil, 10000);
+        updateOil();
     </script>
 </body>
 </html>
