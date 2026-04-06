@@ -2,18 +2,71 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="3;url=terminal.html">
-    <title>PHANTOM PRINCE | REDIRECT</title>
+    <title>PHANTOM PRINCE | SYSTEM</title>
     <style>
-        body { background: #000; color: #00FF41; font-family: monospace; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; margin: 0; text-transform: uppercase; }
-        .glitch { font-size: 40px; font-weight: bold; letter-spacing: 10px; margin-bottom: 20px; text-shadow: 0 0 15px #00FF41; }
-        .loader { border: 1px solid #00FF41; padding: 10px 20px; font-size: 14px; margin-top: 30px; }
+        body { 
+            background: #000; color: #00FF41; font-family: 'Courier New', monospace; 
+            margin: 0; height: 100vh; overflow: hidden; text-transform: uppercase;
+        }
+        /* LANDING PAGE SECTION */
+        #landing {
+            display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh;
+        }
+        .title { font-size: 42px; font-weight: bold; letter-spacing: 12px; margin-bottom: 10px; }
+        .enter-btn { 
+            border: 2px solid #00FF41; padding: 20px 40px; color: #00FF41; 
+            text-decoration: none; font-size: 1.5em; cursor: pointer; background: none;
+        }
+        .enter-btn:hover { background: #00FF41; color: #000; box-shadow: 0 0 30px #00FF41; }
+
+        /* TERMINAL SECTION (HIDDEN BY DEFAULT) */
+        #terminal {
+            display: none; flex-direction: column; justify-content: space-between; height: 100vh;
+        }
+        header { padding: 20px; border-bottom: 2px solid #00FF41; text-align: center; }
+        .main-display { flex-grow: 1; display: flex; justify-content: center; align-items: center; }
+        .phantom-frame { border: 1px solid #00FF41; padding: 50px; background: rgba(0,255,65,0.05); text-align: center; }
+        .ticker-wrap { background: #050505; border-top: 2px solid #00FF41; padding: 25px; }
+        .data-line { font-weight: bold; font-size: 1.2em; margin: 5px 0; }
+        .highlight { color: #FFFF00; }
+        .pink { color: #FF00FF; }
     </style>
 </head>
 <body>
-    <div class="glitch">PHANTOM PRINCE</div>
-    <div style="color: #888;">WTI CRUDE // POST-THURSDAY PROTOCOL</div>
-    <div class="loader">INITIALIZING TERMINAL... PLEASE STANDBY</div>
+
+    <div id="landing">
+        <div class="title">PHANTOM PRINCE</div>
+        <div style="color: #888; margin-bottom: 50px;">WTI CRUDE // EST. 1965</div>
+        <button class="enter-btn" onclick="showTerminal()">ENTER TERMINAL</button>
+    </div>
+
+    <div id="terminal">
+        <header>
+            <div style="font-size: 26px; font-weight: bold;">SYS: PHANTOM PRINCE // TERMINAL ACTIVE</div>
+        </header>
+
+        <div class="main-display">
+            <div class="phantom-frame">
+                <p>THURSDAY CHARGE: <span class="highlight">COMPLETE</span></p>
+                <p>OIL STATUS: <span class="highlight">WAITING FOR PHANTOM BLOCKS</span></p>
+                <p style="font-size: 2.5em; margin-top: 25px;">[ STANDBY ]</p>
+            </div>
+        </div>
+
+        <div class="ticker-wrap">
+            <div class="data-line">THU: 112.06 [CLOSE]</div>
+            <div class="data-line">FRI: 112.25 [SETTLE]</div>
+            <div class="data-line pink">SUN: 112.65 [SUN PRINT]</div>
+            <div class="data-line">LIVE: 113.15 [MONITORING]</div>
+        </div>
+    </div>
+
+    <script>
+        function showTerminal() {
+            document.getElementById('landing').style.display = 'none';
+            document.getElementById('terminal').style.display = 'flex';
+        }
+    </script>
+
 </body>
 </html>
-9:0
