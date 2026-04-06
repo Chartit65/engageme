@@ -22,10 +22,10 @@
             border: 2px solid #00FF41; padding: 20px 40px; color: #00FF41; 
             font-size: 24px; cursor: pointer; background: transparent; font-weight: bold; 
         }
-        header { padding: 15px; border-bottom: 2px solid #00FF41; text-align: center; font-weight: bold; }
+        header { padding: 15px; border-bottom: 2px solid #00FF41; text-align: center; }
         
-        /* THE CHART FIX */
-        .tradingview-widget-container { flex-grow: 1; width: 100%; background: #000; }
+        /* THE CHART AREA */
+        #wti-monitor { flex-grow: 1; width: 100%; background: #000; height: 100%; }
         
         footer { padding: 15px; border-top: 2px solid #00FF41; display: flex; justify-content: space-around; background: #050505; }
         .pink { color: #FF00FF; }
@@ -36,31 +36,12 @@
     <div id="page-one">
         <h1 style="letter-spacing: 10px;">PHANTOM PRINCE</h1>
         <p style="color: #444; margin-bottom: 30px;">WTI CRUDE PROTOCOL</p>
-        <button class="enter-btn" onclick="document.getElementById('page-one').style.display='none'; document.getElementById('page-two').style.display='flex';">ENTER TERMINAL</button>
+        <button class="enter-btn" onclick="launchTerminal()">ENTER TERMINAL</button>
     </div>
 
     <div id="page-two">
-        <header>SYS: PHANTOM PRINCE // ACTIVE FEED</header>
-        
-        <div class="tradingview-widget-container">
-            <div id="tradingview_chart"></div>
-            <script type="text/javascript" src="s3.tradingview.com/tv.js"></script>
-            <script type="text/javascript">
-              new TradingView.widget({
-              "autosize": true,
-              "symbol": "TVC:USOIL",
-              "interval": "60",
-              "timezone": "Etc/UTC",
-              "theme": "dark",
-              "style": "1",
-              "locale": "en",
-              "enable_publishing": false,
-              "allow_symbol_change": true,
-              "container_id": "tradingview_chart"
-            });
-            </script>
-        </div>
-
+        <header>SYS: PHANTOM PRINCE // ACTIVE MONITOR</header>
+        <div id="wti-monitor"></div>
         <footer>
             <div>THU: 112.06</div>
             <div>FRI: 112.25</div>
@@ -68,5 +49,31 @@
         </footer>
     </div>
 
+    <script>
+        function launchTerminal() {
+            // 1. Switch the UI
+            document.getElementById('page-one').style.display = 'none';
+            document.getElementById('page-two').style.display = 'flex';
+
+            // 2. LIVE INJECT the TradingView Library
+            const script = document.createElement('script');
+            script.src = 's3.tradingview.com/tv.js';
+            script.onload = () => {
+                new TradingView.widget({
+                    "autosize": true,
+                    "symbol": "TVC:USOIL",
+                    "interval": "60",
+                    "timezone": "Etc/UTC",
+                    "theme": "dark",
+                    "style": "1",
+                    "locale": "en",
+                    "enable_publishing": false,
+                    "allow_symbol_change": true,
+                    "container_id": "wti-monitor"
+                });
+            };
+            document.body.appendChild(script);
+        }
+    </script>
 </body>
 </html>
