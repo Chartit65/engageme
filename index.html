@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>PHANTOM PRINCE | TERMINAL</title>
     <style>
         body { 
-            background: #000; color: #00FF41; font-family: monospace; 
+            background: #000; color: #00FF41; font-family: 'Courier New', monospace; 
             margin: 0; height: 100vh; overflow: hidden; text-transform: uppercase;
         }
         /* PAGE 1: SPLASH */
@@ -22,11 +22,11 @@
             border: 2px solid #00FF41; padding: 20px 40px; color: #00FF41; 
             font-size: 24px; cursor: pointer; background: transparent; font-weight: bold; 
         }
-        header { padding: 15px; border-bottom: 2px solid #00FF41; text-align: center; }
+        header { padding: 15px; border-bottom: 2px solid #00FF41; text-align: center; font-weight: bold; }
         
-        /* THE CHART AREA */
-        .tradingview-widget-container { flex-grow: 1; width: 100%; }
-        #tv-chart-box { height: 100%; width: 100%; }
+        /* THE CHART FIX: NO SCRIPTS, JUST THE RAW FRAME */
+        .chart-window { flex-grow: 1; width: 100%; background: #000; }
+        iframe { width: 100%; height: 100%; border: none; }
         
         footer { padding: 15px; border-top: 2px solid #00FF41; display: flex; justify-content: space-around; background: #050505; }
         .pink { color: #FF00FF; }
@@ -37,16 +37,14 @@
     <div id="page-one">
         <h1 style="letter-spacing: 10px;">PHANTOM PRINCE</h1>
         <p style="color: #444; margin-bottom: 30px;">WTI CRUDE PROTOCOL</p>
-        <button class="enter-btn" onclick="activateTerminal()">ENTER TERMINAL</button>
+        <button class="enter-btn" onclick="document.getElementById('page-one').style.display='none'; document.getElementById('page-two').style.display='flex';">ENTER TERMINAL</button>
     </div>
 
     <div id="page-two">
         <header>SYS: PHANTOM PRINCE // ACTIVE MONITOR</header>
-        
-        <div class="tradingview-widget-container">
-            <div id="tv-chart-box"></div>
+        <div class="chart-window">
+            <iframe src="s.tradingview.com/widgetembed/?symbol=TVC%3AUSOIL&interval=60&hidesidetoolbar=0&symboledit=1&saveimage=1&toolbarbg=f1f3f6&theme=dark&style=1&timezone=Etc%2FUTC&locale=en" allowfullscreen></iframe>
         </div>
-
         <footer>
             <div>THU: 112.06</div>
             <div>FRI: 112.25</div>
@@ -54,29 +52,5 @@
         </footer>
     </div>
 
-    <script type="text/javascript" src="s3.tradingview.com/tv.js"></script>
-    <script type="text/javascript">
-        function activateTerminal() {
-            // 1. Swap the screens
-            document.getElementById('page-one').style.display = 'none';
-            document.getElementById('page-two').style.display = 'flex';
-
-            // 2. Build the widget ONLY after the button is clicked
-            new TradingView.widget({
-                "autosize": true,
-                "symbol": "TVC:USOIL",
-                "interval": "60",
-                "timezone": "Etc/UTC",
-                "theme": "dark",
-                "style": "1",
-                "locale": "en",
-                "toolbar_bg": "#f1f3f6",
-                "enable_publishing": false,
-                "hide_side_toolbar": false,
-                "allow_symbol_change": true,
-                "container_id": "tv-chart-box"
-            });
-        }
-    </script>
 </body>
 </html>
