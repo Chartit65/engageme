@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Terminal V4.2 | Proxy Mode</title>
+    <title>Terminal V4.3 | Multi-Proxy Mode</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { background: #000; color: #00ff00; font-family: monospace; overflow: hidden; }
@@ -89,6 +89,29 @@ function setStatus(msg) {
     document.getElementById('status').innerText = msg;
 }
 
+// ── FETCH WITH PROXY FALLBACK ─────────────────────────────────────────────────
+// Tries three different CORS proxies in order until one works
+async function fetchWithProxy(url) {
+    const proxies = [
+        `https://corsproxy.io/?url=${encodeURIComponent(url)}`,
+        `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+        `https://proxy.cors.sh/${url}`
+    ];
+
+    for (let i = 0; i < proxies.length; i++) {
+        try {
+            const res = await fetch(proxies[i]);
+            if (!res.ok) continue;
+            const text = await res.text();
+            return JSON.parse(text);
+        } catch (err) {
+            console.warn(`Proxy ${i + 1} failed:`, err);
+        }
+    }
+
+    throw new Error('All proxies failed');
+}
+
 // ── BUILD CHART ───────────────────────────────────────────────────────────────
 function buildChart(symbol) {
     const container = document.getElementById('chart-container');
@@ -159,14 +182,9 @@ async function sync() {
     buildChart(ticker);
 
     try {
-        const target   = `${GOOGLE_URL}?ticker=${encodeURIComponent(ticker)}`;
-        const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(target)}`;
-
-        const res = await fetch(proxyUrl);
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-
-        const data = await res.json();
-        const row  = data[ticker] || data;
+        const target = `${GOOGLE_URL}?ticker=${encodeURIComponent(ticker)}`;
+        const data   = await fetchWithProxy(target);
+        const row    = data[ticker] || data;
 
         const levels = [
             { price: parseFloat(row.floor        || 0), label: 'FLOOR',    color: '#00ff00' },
