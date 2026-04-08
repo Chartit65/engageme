@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Market Intelligence Terminal | Floor Analysis</title>
+    <title>Market Intelligence Terminal</title>
     <style>
         body { background-color: #0a0a0a; color: #00ff00; font-family: 'Courier New', monospace; margin: 0; overflow: hidden; }
         #header { height: 50px; background: #111; border-bottom: 2px solid #333; display: flex; align-items: center; padding: 0 20px; justify-content: space-between; }
@@ -10,13 +10,87 @@
         .controls { display: flex; gap: 10px; }
         input { background: #000; border: 1px solid #00ff00; color: #00ff00; padding: 5px; text-transform: uppercase; }
         button { background: #00ff00; color: #000; border: none; padding: 5px 15px; cursor: pointer; font-weight: bold; }
-        button:hover { background: #00cc00; }
     </style>
 </head>
 <body>
 
 <div id="header">
-    <div>SYSTEM STATUS: ACTIVE // DEEP-SYNC // EXTENDED HOURS</div>
+    <div>SYSTEM STATUS: ONLINE // V3.0 DEEP-SYNC</div>
     <div class="controls">
         <input type="text" id="tickerInput" placeholder="ENTER TICKER">
-        <button onclick="syncData()">SYNC DATA & CHART</button>
+        <button id="syncBtn">SYNC DATA & CHART</button>
+    </div>
+</div>
+
+<div id="chart-container"></div>
+
+<script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+
+<script>
+    const googleUrl = "https://script.google.com/macros/s/AKfycbwcWhXEgq_o7vNiRn09YKxsJCe4QNYPtEs0IU1zX6RB_R3ELJKF7kFUYsKza8mHz1hU/exec";
+    
+    // CHART ENGINE
+    function loadChart(symbol, floor, ceiling) {
+        document.getElementById("chart-container").innerHTML = "";
+        const widget = new TradingView.widget({
+            "autosize": true,
+            "symbol": symbol,
+            "interval": "1",
+            "timezone": "Etc/UTC",
+            "theme": "dark",
+            "style": "1",
+            "locale": "en",
+            "container_id": "chart-container",
+            "extended_hours": true
+        });
+
+        widget.onChartReady(() => {
+            if (floor > 0) {
+                widget.chart().createShape({
+                    price: floor, shape: 'horizontal_line', lock: true,
+                    overrides: { linecolor: '#00ff00', linewidth: 3, showLabel: true, text: "FLOOR" }
+                });
+            }
+            if (ceiling > 0) {
+                widget.chart().createShape({
+                    price: ceiling, shape: 'horizontal_line', lock: true,
+                    overrides: { linecolor: '#ff00ff', linewidth: 2, showLabel: true, text: "CEILING" }
+                });
+            }
+        });
+    }
+
+    // SYNC LOGIC
+    async function executeSync() {
+        const ticker = document.getElementById('tickerInput').value.toUpperCase().trim();
+        if (!ticker) return;
+
+        try {
+            let response = await fetch(googleUrl);
+            let data = await response.json();
+
+            if (!data[ticker]) {
+                alert("ADDING NEW TICKER...");
+                await fetch(`${googleUrl}?add=${ticker}`, { mode: 'no-cors' });
+                await new Promise(r => setTimeout(r, 3000));
+                response = await fetch(googleUrl);
+                data = await response.json();
+            }
+
+            const info = data[ticker];
+            loadChart(ticker, parseFloat(info.floor), parseFloat(info.ceiling));
+        } catch (e) {
+            console.error(e);
+            alert("Connection Error. Try again.");
+        }
+    }
+
+    // Attach the event listener directly so it can't be "undefined"
+    document.getElementById('syncBtn').onclick = executeSync;
+
+    // Default Load
+    window.onload = () => loadChart("NASDAQ:PRCH", 0, 0);
+</script>
+
+</body>
+</html>
