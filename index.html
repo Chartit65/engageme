@@ -3,66 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PHANTOM PRINCE | VISUAL RECON</title>
+    <title>EngageMe Terminal | Floor Intelligence</title>
     <style>
-        body { background: #000; color: #00FF41; font-family: monospace; margin: 0; overflow: hidden; }
-        #terminal { display: flex; flex-direction: column; height: 100vh; padding: 20px; box-sizing: border-box; }
-        header { border-bottom: 2px solid #00FF41; padding: 10px; display: flex; justify-content: space-between; font-weight: bold; }
-        
-        /* THE CHART CANVAS */
-        #chart-container { flex-grow: 1; margin: 20px 0; border: 1px solid #111; position: relative; display: flex; align-items: flex-end; gap: 10px; padding: 40px; background: linear-gradient(180deg, #050505 0%, #000 100%); }
-        .candle { width: 50px; position: relative; transition: height 0.5s ease; }
-        .candle-body { width: 100%; border: 1px solid; }
-        .wick { position: absolute; left: 50%; width: 2px; height: 120%; top: -10%; transform: translateX(-50%); z-index: -1; }
-        .label { position: absolute; bottom: -25px; left: 0; width: 100%; text-align: center; font-size: 0.7em; color: #444; }
-        .price-tag { position: absolute; top: -25px; left: 0; width: 100%; text-align: center; font-size: 0.8em; }
-
-        /* COLORS */
-        .up { background: #00FF41; border-color: #00FF41; color: #00FF41; }
-        .down { background: #FF0000; border-color: #FF0000; color: #FF0000; }
-        .phantom { background: transparent; border: 2px dashed #FF00FF; color: #FF00FF; }
-        .phantom-wick { background: #FF00FF !important; }
-
-        footer { border-top: 2px solid #00FF41; padding: 15px; display: flex; justify-content: space-between; font-size: 0.9em; }
+        body { background-color: #0a0a0a; color: #00ff41; font-family: 'Courier New', monospace; margin: 0; padding: 20px; }
+        .terminal-header { border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 20px; }
+        .status-bar { color: #888; font-size: 0.8rem; margin-bottom: 20px; }
+        .data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .panel { border: 1px solid #333; padding: 15px; background: #111; }
+        h2 { color: #fff; font-size: 1rem; text-transform: uppercase; margin-top: 0; }
+        input, button { background: #222; border: 1px solid #00ff41; color: #00ff41; padding: 10px; font-family: inherit; }
+        .alert { color: #ff3e3e; font-weight: bold; }
+        #log { font-size: 0.9rem; height: 300px; overflow-y: auto; border: 1px solid #222; padding: 10px; background: #000; }
     </style>
 </head>
 <body>
 
-<div id="terminal">
-    <header>
-        <span>PHANTOM PRINCE // VISUAL RECONSTRUCTION</span>
-        <span>APR 06 2026</span>
-    </header>
+<div class="terminal-header">
+    <h1>ENGAGEME.LIVE // MARKET PLUMBING</h1>
+    <div class="status-bar">SYSTEM STATUS: <span id="connection-status">DISCONNECTED</span> | RULES: BNRG_FILTER, POST_SLAUGHTER, CXAI_FLOOR</div>
+</div>
 
-    <div id="chart-container">
-        <div class="candle" style="height: 60%;">
-            <div class="price-tag">$112.06</div>
-            <div class="candle-body up" style="height: 100%;"></div>
-            <div class="wick up" style="background:#00FF41"></div>
-            <div class="label">THU SETTLE</div>
-        </div>
-
-        <div class="candle" style="height: 90%;">
-            <div class="price-tag" style="color:#FF00FF">$115.37</div>
-            <div class="candle-body phantom" style="height: 100%;"></div>
-            <div class="wick phantom-wick"></div>
-            <div class="label" style="color:#FF00FF">PHANTOM GAP</div>
-        </div>
-
-        <div class="candle" style="height: 55%;">
-            <div class="price-tag">$111.04</div>
-            <div class="candle-body down" style="height: 100%;"></div>
-            <div class="wick down" style="background:#FF0000"></div>
-            <div class="label">CURRENT</div>
-        </div>
+<div class="data-grid">
+    <div class="panel">
+        <h2>Ticker Entry</h2>
+        <input type="text" id="tickerInput" placeholder="ENTER TICKER..." autocomplete="off">
+        <button onclick="processTicker()">SUBMIT TO FLOOR</button>
+        <p id="dilution-warning" class="alert"></p>
     </div>
 
-    <footer>
-        <div>GAP STATUS: <span style="color:#FF00FF">REFILLED</span></div>
-        <div>PHANTOM DELTA: <span style="color:#FF00FF">+3.31</span></div>
-        <div>MARKET: <span style="color:#00FF41">OPEN</span></div>
-    </footer>
+    <div class="panel">
+        <h2>Intelligence Log</h2>
+        <div id="log">SYSTEM READY. AWAITING INPUT...</div>
+    </div>
 </div>
+
+<script>
+    // --- CONNECT YOUR PLUMBING HERE ---
+    const scriptURL = 'PASTE_YOUR_APPS_SCRIPT_URL_HERE';
+    
+    async function processTicker() {
+        const ticker = document.getElementById('tickerInput').value.toUpperCase();
+        const log = document.getElementById('log');
+        
+        if (!ticker) return;
+
+        log.innerHTML += `<br>[${new Date().toLocaleTimeString()}] Scanning ${ticker}...`;
+        
+        // Post-Slaughter & BNRG Filter Check
+        log.innerHTML += `<br> > Applying BNRG Filter & CXAI Floor Rules...`;
+
+        try {
+            const response = await fetch(scriptURL, {
+                method: 'POST',
+                mode: 'no-cors', // Essential for Google Apps Script
+                cache: 'no-cache',
+                body: JSON.stringify({ ticker: ticker, timestamp: new Date() }),
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+            log.innerHTML += `<br><span style="color:white;">[SUCCESS] Data transmitted to Google Sheets.</span>`;
+            document.getElementById('connection-status').innerText = 'CONNECTED';
+            document.getElementById('connection-status').style.color = '#00ff41';
+        } catch (error) {
+            log.innerHTML += `<br><span class="alert">[ERROR] Floor connection failed.</span>`;
+            console.error('Error:', error);
+        }
+        
+        document.getElementById('tickerInput').value = '';
+    }
+</script>
 
 </body>
 </html>
