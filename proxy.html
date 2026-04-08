@@ -1,1 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"></head>
+<body>
+<script>
+const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbxJnpjgbhfOWLJXENc2hq6UgxTcJLKQTTsADXY_3KJgCe4CMjwsoEOHwDcy0JaNi7uV/exec";
 
+const googleParams = new URLSearchParams(window.location.search);
+const targetUrl = GOOGLE_URL + '?' + googleParams.toString();
+
+fetch(targetUrl)
+  .then(r => r.json())
+  .then(data => {
+    window.parent.postMessage({ status: 'ok', data: data }, '*');
+  })
+  .catch(err => {
+    window.parent.postMessage({ status: 'error', message: err.toString() }, '*');
+  });
+</script>
+</body>
+</html>
