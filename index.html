@@ -2,83 +2,205 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval'; script-src * 'unsafe-inline' 'unsafe-eval'; connect-src * 'unsafe-inline';">
-    <title>Terminal V3.5 | API Sync</title>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://s3.tradingview.com https://*.tradingview.com; script-src 'self' 'unsafe-inline' https://s3.tradingview.com; connect-src *; style-src 'self' 'unsafe-inline';">
+    <title>Terminal V3.7 | Overlay Mode</title>
     <style>
-        body { background-color: #0a0a0a; color: #00ff00; font-family: 'Courier New', monospace; margin: 0; overflow: hidden; }
-        #header { height: 50px; background: #111; border-bottom: 2px solid #333; display: flex; align-items: center; padding: 0 20px; justify-content: space-between; }
-        #chart-container { height: calc(100vh - 50px); width: 100%; }
-        input { background: #000; border: 1px solid #00ff00; color: #00ff00; padding: 5px; text-transform: uppercase; }
-        button { background: #00ff00; color: #000; border: none; padding: 5px 15px; cursor: pointer; font-weight: bold; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background: #000; color: #00ff00; font-family: monospace; overflow: hidden; }
+
+        #header {
+            height: 60px; background: #111;
+            border-bottom: 2px solid #333;
+            display: flex; align-items: center;
+            padding: 0 20px; gap: 16px;
+        }
+
+        input {
+            background: #000; border: 1px solid #00ff00;
+            color: #00ff00; padding: 8px; width: 150px;
+            font-family: monospace; text-transform: uppercase;
+        }
+        input:focus { outline: none; box-shadow: 0 0 4px #00ff00; }
+
+        button {
+            background: #00ff00; color: #000; border: none;
+            padding: 8px 20px; cursor: pointer; font-weight: bold;
+            font-family: monospace;
+        }
+        button:hover { background: #00cc00; }
+
+        #status { font-size: 11px; color: #666; flex: 1; }
+
+        /* wrapper holds chart + overlay together */
+        #wrapper {
+            position: relative;
+            height: calc(100vh - 60px);
+            width: 100%;
+            overflow: hidden;
+        }
+
+        #chart-container { height: 100%; width: 100%; }
+
+        /* overlay sits on top of the iframe */
+        #overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 999; }
+
+        .price-line {
+            position: absolute;
+            left: 0;
+            width: calc(100% - 65px); /* leave room for TV price axis */
+            height: 2px;
+            pointer-events: none;
+        }
+        .price-label {
+            position: absolute;
+            right: 70px;
+            font-size: 11px;
+            font-family: monospace;
+            font-weight: bold;
+            background: rgba(0,0,0,0.8);
+            padding: 1px 6px;
+            pointer-events: none;
+            transform: translateY(-50%);
+            white-space: nowrap;
+            border-left: 2px solid currentColor;
+        }
     </style>
 </head>
 <body>
 
 <div id="header">
-    <div>SYSTEM STATUS: ONLINE // API MATCHED</div>
-    <div class="controls">
-        <input type="text" id="tickerInput" placeholder="ENTER TICKER">
-        <button id="syncBtn">SYNC DATA & CHART</button>
-    </div>
+    <input type="text" id="tickerInput" placeholder="ENTER TICKER" maxlength="10" />
+    <button id="syncBtn">SYNC DATA</button>
+    <div id="status">READY</div>
 </div>
-<div id="chart-container"></div>
 
-<script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+<div id="wrapper">
+    <div id="chart-container"></div>
+    <div id="overlay"></div>
+</div>
 
+<script src="https://s3.tradingview.com/tv.js"></script>
 <script>
-    // 1. PASTE YOUR NEW DEPLOYMENT URL BETWEEN THE QUOTES BELOW
-    const googleUrl = "https://script.google.com/macros/s/AKfycbxYSKyPjur9E5JmjnoDuUeUt3VZH5CNnaznH0haXg_m58WHjhrl8pFMSNjn_cKJwZ-q/exec";
+const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbxYSKyPjur9E5JmjnoDuUeUt3VZH5CNnaznH0haXg_m58WHjhrl8pFMSNjn_cKJwZ-q/exec";
 
-    function drawChart(symbol, floor, ceiling) {
-        document.getElementById("chart-container").innerHTML = "";
-        const widget = new TradingView.widget({
-            "autosize": true,
-            "symbol": symbol,
-            "interval": "1",
-            "theme": "dark",
-            "container_id": "chart-container",
-            "extended_hours": true,
-            "timezone": "Etc/UTC"
-        });
+let lastLevels = [];
 
-        setTimeout(() => {
-            if (widget && widget.chart) {
-                try {
-                    // Draw Floor
-                    if (floor > 0) {
-                        widget.chart().createShape({
-                            price: floor, shape: 'horizontal_line', lock: true,
-                            overrides: { linecolor: '#00ff00', linewidth: 3, showLabel: true, text: "FLOOR: $" + floor }
-                        });
-                    }
-                    // Draw Ceiling
-                    if (ceiling > 0) {
-                        widget.chart().createShape({
-                            price: ceiling, shape: 'horizontal_line', lock: true,
-                            overrides: { linecolor: '#ff00ff', linewidth: 2, showLabel: true, text: "CEILING: $" + ceiling }
-                        });
-                    }
-                } catch (e) { console.log("Engine warming up..."); }
-            }
-        }, 2500); // 2.5 second wait for the "handshake"
+function setStatus(msg) {
+    document.getElementById('status').innerText = msg;
+}
+
+// ── CHART ─────────────────────────────────────────────────────────────────
+function buildChart(symbol) {
+    const container = document.getElementById('chart-container');
+    container.innerHTML = ''; // clear previous widget before building new one
+
+    new TradingView.widget({
+        autosize: true,
+        symbol: symbol,
+        interval: "D",
+        timezone: "Etc/UTC",
+        theme: "dark",
+        style: "1",
+        locale: "en",
+        container_id: "chart-container"
+    });
+}
+
+// ── OVERLAY LINES ─────────────────────────────────────────────────────────
+function drawOverlay(levels) {
+    const overlay = document.getElementById('overlay');
+    const wrapper = document.getElementById('wrapper');
+    overlay.innerHTML = '';
+
+    const valid = levels.filter(l => l.price > 0);
+    if (valid.length === 0) return;
+
+    // Build price range with padding so lines aren't crammed to edges
+    const prices = valid.map(l => l.price);
+    const minP   = Math.min(...prices) * 0.80;
+    const maxP   = Math.max(...prices) * 1.20;
+    const h      = wrapper.offsetHeight;
+
+    valid.forEach(l => {
+        // Higher price = closer to top (lower topPx)
+        const pct   = ((maxP - l.price) / (maxP - minP)) * 100;
+        const topPx = Math.round((pct / 100) * h);
+
+        // Horizontal line
+        const line = document.createElement('div');
+        line.className        = 'price-line';
+        line.style.top        = topPx + 'px';
+        line.style.background = l.color;
+
+        // Label
+        const label = document.createElement('div');
+        label.className   = 'price-label';
+        label.style.top   = topPx + 'px';
+        label.style.color = l.color;
+        label.textContent = l.label + '  $' + parseFloat(l.price).toFixed(2);
+
+        overlay.appendChild(line);
+        overlay.appendChild(label);
+    });
+
+    lastLevels = levels;
+}
+
+// Redraw on resize so positions stay accurate
+window.addEventListener('resize', () => {
+    if (lastLevels.length) drawOverlay(lastLevels);
+});
+
+// ── SYNC ──────────────────────────────────────────────────────────────────
+async function sync() {
+    const ticker = document.getElementById('tickerInput').value.toUpperCase().trim();
+    if (!ticker) { setStatus('ENTER A TICKER'); return; }
+
+    setStatus('SYNCING ' + ticker + '...');
+    document.getElementById('overlay').innerHTML = '';
+    buildChart(ticker);
+
+    try {
+        const res = await fetch(`${GOOGLE_URL}?ticker=${encodeURIComponent(ticker)}&cb=${Date.now()}`);
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+
+        const row = data[ticker] || data;
+
+        const levels = [
+            { price: parseFloat(row.floor        || 0), label: 'FLOOR',    color: '#00ff00' },
+            { price: parseFloat(row.ceiling      || 0), label: 'CEILING',  color: '#ff00ff' },
+            { price: parseFloat(row.dilution1_lo || 0), label: 'DIL1 LO', color: '#ff4444' },
+            { price: parseFloat(row.dilution1_hi || 0), label: 'DIL1 HI', color: '#ff4444' },
+            { price: parseFloat(row.dilution2_lo || 0), label: 'DIL2 LO', color: '#cc44ff' },
+            { price: parseFloat(row.dilution2_hi || 0), label: 'DIL2 HI', color: '#cc44ff' },
+        ].filter(l => l.price > 0);
+
+        if (levels.length === 0) {
+            setStatus('NO LEVELS FOUND — CHART ONLY');
+        } else {
+            setTimeout(() => {
+                drawOverlay(levels);
+                setStatus('ONLINE // ' + ticker + ' // ' + levels.length + ' LEVELS');
+            }, 1800); // wait for TV iframe to finish rendering
+        }
+
+    } catch (err) {
+        console.error(err);
+        setStatus('DATA ERROR — CHART ONLY');
     }
+}
 
-    async function sync() {
-        const t = document.getElementById('tickerInput').value.toUpperCase().trim();
-        if (!t) return;
+// ── EVENTS ────────────────────────────────────────────────────────────────
+document.getElementById('syncBtn').onclick = sync;
+document.getElementById('tickerInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') sync();
+});
 
-        try {
-            // Read one ticker (Claude's Line 2)
-            const res = await fetch(googleUrl + "?ticker=" + t + "&cache=" + new Date().getTime());
-            const data = await res.json();
-
-            // Claude's script returns either the full object or the ticker key
-            const row = data[t] || data;
-
-            if (row && (row.floor || row.ceiling)) {
-                drawChart(t, parseFloat(row.floor), parseFloat(row.ceiling));
-            } else {
-                // Add new ticker (Claude's Line 3)
-                fetch(googleUrl + "?action=add&ticker=" + t, { mode: 'no-cors' });
-                drawChart(t, 0, 0);
-                alert("TICKER ADDED. WAIT 5 SECON
+window.onload = () => {
+    document.getElementById('tickerInput').value = 'AAPL';
+    sync();
+};
+</script>
+</body>
+</html>
