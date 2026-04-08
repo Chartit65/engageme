@@ -2,8 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://s3.tradingview.com https://*.tradingview.com https://www.tradingview-widget.com https://*.tradingview-widget.com blob:; frame-src https://*.tradingview.com https://*.tradingview-widget.com https://s.tradingview.com; connect-src *; style-src 'self' 'unsafe-inline' https://*.tradingview.com; img-src * data: blob:; worker-src blob:; font-src * data:;">
-    <title>Terminal V3.8 | Overlay Mode</title>
+    <title>Terminal V3.9 | Overlay Mode</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { background: #000; color: #00ff00; font-family: monospace; overflow: hidden; }
@@ -100,21 +99,17 @@
 <script src="https://s3.tradingview.com/tv.js"></script>
 <script>
 
-// ── CONFIG — update this URL after redeploying your Apps Script ──────────────
 const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbxYSKyPjur9E5JmjnoDuUeUt3VZH5CNnaznH0haXg_m58WHjhrl8pFMSNjn_cKJwZ-q/exec";
 
-// ── STATE ─────────────────────────────────────────────────────────────────────
 let lastLevels = [];
 
-// ── HELPERS ───────────────────────────────────────────────────────────────────
 function setStatus(msg) {
     document.getElementById('status').innerText = msg;
 }
 
-// ── CHART ─────────────────────────────────────────────────────────────────────
 function buildChart(symbol) {
     const container = document.getElementById('chart-container');
-    container.innerHTML = ''; // wipe old widget before building new one
+    container.innerHTML = '';
 
     new TradingView.widget({
         autosize: true,
@@ -132,10 +127,6 @@ function buildChart(symbol) {
     });
 }
 
-// ── OVERLAY LINES ─────────────────────────────────────────────────────────────
-// NOTE: The free TradingView widget (tv.js) does NOT expose createShape() or
-// any drawing API. Overlay divs positioned by price math is the correct
-// workaround for the free widget.
 function drawOverlay(levels) {
     const overlay = document.getElementById('overlay');
     const wrapper = document.getElementById('wrapper');
@@ -150,7 +141,6 @@ function drawOverlay(levels) {
     const h      = wrapper.offsetHeight;
 
     valid.forEach(l => {
-        // Higher price = lower topPx (closer to top of chart)
         const pct   = ((maxP - l.price) / (maxP - minP)) * 100;
         const topPx = Math.round((pct / 100) * h);
 
@@ -172,12 +162,10 @@ function drawOverlay(levels) {
     lastLevels = levels;
 }
 
-// Redraw on resize so line positions stay accurate
 window.addEventListener('resize', () => {
     if (lastLevels.length) drawOverlay(lastLevels);
 });
 
-// ── SYNC ──────────────────────────────────────────────────────────────────────
 async function sync() {
     const ticker = document.getElementById('tickerInput').value.toUpperCase().trim();
     if (!ticker) { setStatus('ENTER A TICKER'); return; }
@@ -191,7 +179,6 @@ async function sync() {
         if (!res.ok) throw new Error('HTTP ' + res.status);
         const data = await res.json();
 
-        // Handle both { TICKER: { floor, ceiling } } and flat { floor, ceiling }
         const row = data[ticker] || data;
 
         const levels = [
@@ -206,7 +193,6 @@ async function sync() {
         if (levels.length === 0) {
             setStatus('NO LEVELS FOUND — CHART ONLY');
         } else {
-            // Wait for TradingView iframe to finish rendering before drawing overlay
             setTimeout(() => {
                 drawOverlay(levels);
                 setStatus('ONLINE // ' + ticker + ' // ' + levels.length + ' LEVELS LOADED');
@@ -219,7 +205,6 @@ async function sync() {
     }
 }
 
-// ── EVENTS ────────────────────────────────────────────────────────────────────
 document.getElementById('syncBtn').onclick = sync;
 document.getElementById('tickerInput').addEventListener('keydown', e => {
     if (e.key === 'Enter') sync();
