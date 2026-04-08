@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Terminal V4.3 | Multi-Proxy Mode</title>
+    <title>Terminal V4.4 | Proxy Bridge Mode</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { background: #000; color: #00ff00; font-family: monospace; overflow: hidden; }
@@ -61,6 +61,13 @@
             white-space: nowrap;
             border-left: 2px solid currentColor;
         }
+
+        /* Hidden iframe bridge */
+        #proxy-frame {
+            display: none;
+            width: 0; height: 0;
+            border: none;
+        }
     </style>
 </head>
 <body>
@@ -76,40 +83,52 @@
     <div id="overlay"></div>
 </div>
 
+<!-- Hidden iframe used as same-domain proxy bridge -->
+<iframe id="proxy-frame" src="about:blank"></iframe>
+
 <script src="https://s3.tradingview.com/tv.js"></script>
 <script>
 
 // ── CONFIG ────────────────────────────────────────────────────────────────────
-const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbxC6EXP_XacbGPncZwQs62bC0ANUBzgZClzyoRxkfYc8vuGb7Kz6tqfSJf0camAGmpT/exec";
+const PROXY_PAGE = '/proxy.html'; // same-domain proxy file in your repo root
 
-let lastLevels = [];
+let lastLevels    = [];
+let proxyCallback = null;
 
 // ── STATUS ────────────────────────────────────────────────────────────────────
 function setStatus(msg) {
     document.getElementById('status').innerText = msg;
 }
 
-// ── FETCH WITH PROXY FALLBACK ─────────────────────────────────────────────────
-// Tries three different CORS proxies in order until one works
-async function fetchWithProxy(url) {
-    const proxies = [
-        `https://corsproxy.io/?url=${encodeURIComponent(url)}`,
-        `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
-        `https://proxy.cors.sh/${url}`
-    ];
+// ── PROXY FETCH via iframe postMessage ────────────────────────────────────────
+// Loads proxy.html in a hidden iframe with the query params,
+// proxy.html fetches Google and sends data back via postMessage
+function proxyFetch(queryParams) {
+    return new Promise((resolve, reject) => {
+        const frame = document.getElementById('proxy-frame');
+        const timeout = setTimeout(() => {
+            reject(new Error('Proxy timeout'));
+        }, 12000);
 
-    for (let i = 0; i < proxies.length; i++) {
-        try {
-            const res = await fetch(proxies[i]);
-            if (!res.ok) continue;
-            const text = await res.text();
-            return JSON.parse(text);
-        } catch (err) {
-            console.warn(`Proxy ${i + 1} failed:`, err);
+        // One-time message listener
+        function onMessage(event) {
+            // Only accept messages from our own domain
+            if (event.origin !== window.location.origin) return;
+            clearTimeout(timeout);
+            window.removeEventListener('message', onMessage);
+
+            if (event.data.status === 'ok') {
+                resolve(event.data.data);
+            } else {
+                reject(new Error(event.data.message || 'Proxy error'));
+            }
         }
-    }
 
-    throw new Error('All proxies failed');
+        window.addEventListener('message', onMessage);
+
+        // Load proxy.html with params — triggers the fetch on the same domain
+        frame.src = PROXY_PAGE + '?' + queryParams;
+    });
 }
 
 // ── BUILD CHART ───────────────────────────────────────────────────────────────
@@ -182,9 +201,8 @@ async function sync() {
     buildChart(ticker);
 
     try {
-        const target = `${GOOGLE_URL}?ticker=${encodeURIComponent(ticker)}`;
-        const data   = await fetchWithProxy(target);
-        const row    = data[ticker] || data;
+        const data = await proxyFetch(`ticker=${encodeURIComponent(ticker)}`);
+        const row  = data[ticker] || data;
 
         const levels = [
             { price: parseFloat(row.floor        || 0), label: 'FLOOR',    color: '#00ff00' },
