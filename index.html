@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline' 'unsafe-eval'; script-src * 'unsafe-inline' 'unsafe-eval'; connect-src * 'unsafe-inline';">
-    <title>Terminal V3.4 | Overlay Fixed</title>
+    <title>Terminal V3.5 | API Sync</title>
     <style>
         body { background-color: #0a0a0a; color: #00ff00; font-family: 'Courier New', monospace; margin: 0; overflow: hidden; }
         #header { height: 50px; background: #111; border-bottom: 2px solid #333; display: flex; align-items: center; padding: 0 20px; justify-content: space-between; }
@@ -15,7 +15,7 @@
 <body>
 
 <div id="header">
-    <div>TERMINAL V3.4 // BYPASS: ENABLED</div>
+    <div>SYSTEM STATUS: ONLINE // API MATCHED</div>
     <div class="controls">
         <input type="text" id="tickerInput" placeholder="ENTER TICKER">
         <button id="syncBtn">SYNC DATA & CHART</button>
@@ -26,11 +26,11 @@
 <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
 
 <script>
-    const googleUrl = "https://script.google.com/macros/s/AKfycbwcWhXEgq_o7vNiRn09YKxsJCe4QNYPtEs0IU1zX6RB_R3ELJKF7kFUYsKza8mHz1hU/exec";
+    // 1. PASTE YOUR NEW DEPLOYMENT URL BETWEEN THE QUOTES BELOW
+    const googleUrl = "https://script.google.com/macros/s/AKfycbxYSKyPjur9E5JmjnoDuUeUt3VZH5CNnaznH0haXg_m58WHjhrl8pFMSNjn_cKJwZ-q/exec";
 
     function drawChart(symbol, floor, ceiling) {
         document.getElementById("chart-container").innerHTML = "";
-        
         const widget = new TradingView.widget({
             "autosize": true,
             "symbol": symbol,
@@ -41,23 +41,26 @@
             "timezone": "Etc/UTC"
         });
 
-        // We use a simple 2-second delay to let the chart load before drawing
         setTimeout(() => {
-            try {
-                if (floor > 0) {
-                    widget.chart().createShape({
-                        price: floor, shape: 'horizontal_line', lock: true,
-                        overrides: { linecolor: '#00ff00', linewidth: 3, showLabel: true, text: "FLOOR: $" + floor }
-                    });
-                }
-                if (ceiling > 0) {
-                    widget.chart().createShape({
-                        price: ceiling, shape: 'horizontal_line', lock: true,
-                        overrides: { linecolor: '#ff00ff', linewidth: 2, showLabel: true, text: "CEILING: $" + ceiling }
-                    });
-                }
-            } catch (e) { console.log("Still loading..."); }
-        }, 2000);
+            if (widget && widget.chart) {
+                try {
+                    // Draw Floor
+                    if (floor > 0) {
+                        widget.chart().createShape({
+                            price: floor, shape: 'horizontal_line', lock: true,
+                            overrides: { linecolor: '#00ff00', linewidth: 3, showLabel: true, text: "FLOOR: $" + floor }
+                        });
+                    }
+                    // Draw Ceiling
+                    if (ceiling > 0) {
+                        widget.chart().createShape({
+                            price: ceiling, shape: 'horizontal_line', lock: true,
+                            overrides: { linecolor: '#ff00ff', linewidth: 2, showLabel: true, text: "CEILING: $" + ceiling }
+                        });
+                    }
+                } catch (e) { console.log("Engine warming up..."); }
+            }
+        }, 2500); // 2.5 second wait for the "handshake"
     }
 
     async function sync() {
@@ -65,25 +68,17 @@
         if (!t) return;
 
         try {
-            // Adding a timestamp to the URL forces Google to send fresh data every time
-            const res = await fetch(googleUrl + "?t=" + new Date().getTime());
+            // Read one ticker (Claude's Line 2)
+            const res = await fetch(googleUrl + "?ticker=" + t + "&cache=" + new Date().getTime());
             const data = await res.json();
 
-            if (data[t]) {
-                drawChart(t, parseFloat(data[t].floor), parseFloat(data[t].ceiling));
-            } else {
-                // Ticker not in sheet? Load chart anyway and try to add it
-                drawChart(t, 0, 0);
-                fetch(googleUrl + "?add=" + t, { mode: 'no-cors' });
-            }
-        } catch (e) {
-            console.error("Fetch Error:", e);
-            drawChart(t, 0, 0);
-        }
-    }
+            // Claude's script returns either the full object or the ticker key
+            const row = data[t] || data;
 
-    document.getElementById('syncBtn').onclick = sync;
-    window.onload = () => drawChart("PRCH", 0, 0);
-</script>
-</body>
-</html>
+            if (row && (row.floor || row.ceiling)) {
+                drawChart(t, parseFloat(row.floor), parseFloat(row.ceiling));
+            } else {
+                // Add new ticker (Claude's Line 3)
+                fetch(googleUrl + "?action=add&ticker=" + t, { mode: 'no-cors' });
+                drawChart(t, 0, 0);
+                alert("TICKER ADDED. WAIT 5 SECON
