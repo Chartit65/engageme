@@ -16,7 +16,7 @@
 <body>
 
 <div id="header">
-    <div>SYSTEM STATUS: ACTIVE // AUTO-SYNC ENABLED</div>
+    <div>SYSTEM STATUS: ACTIVE // DEEP-SYNC ENABLED</div>
     <div class="controls">
         <input type="text" id="tickerInput" placeholder="ENTER TICKER">
         <button onclick="syncData()">SYNC DATA & CHART</button>
@@ -28,17 +28,15 @@
 <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
 
 <script>
-    // YOUR NEWEST GOOGLE DEPLOYMENT URL
     const googleUrl = "https://script.google.com/macros/s/AKfycbwcWhXEgq_o7vNiRn09YKxsJCe4QNYPtEs0IU1zX6RB_R3ELJKF7kFUYsKza8mHz1hU/exec";
+    let tvWidget = null;
 
-    let widget;
+    // This is the "Engine" that builds the chart
+    function loadTradingView(symbol, floor, ceiling) {
+        // 1. Wipe the container clean to force a fresh reload
+        document.getElementById("chart-container").innerHTML = "";
 
-    function initChart(symbol = "NASDAQ:TPET") {
-        // Clear previous chart to prevent ghosting
-        const container = document.getElementById("chart-container");
-        if (container) container.innerHTML = "";
-
-        widget = new TradingView.widget({
+        tvWidget = new TradingView.widget({
             "autosize": true,
             "symbol": symbol,
             "interval": "1",
@@ -49,65 +47,63 @@
             "toolbar_bg": "#f1f3f6",
             "enable_publishing": false,
             "hide_top_toolbar": false,
-            "save_image": false,
             "container_id": "chart-container"
+        });
+
+        // 2. WAIT for the chart to finish loading before drawing lines
+        tvWidget.onChartReady(() => {
+            console.log("Chart ready. Drawing indicators...");
+            
+            // Draw Green Floor
+            if (floor) {
+                tvWidget.chart().createShape({
+                    price: floor,
+                    shape: 'horizontal_line',
+                    lock: true,
+                    overrides: { linecolor: '#00ff00', linewidth: 3, showLabel: true, text: "FLOOR: " + floor }
+                });
+            }
+
+            // Draw Purple Ceiling
+            if (ceiling) {
+                tvWidget.chart().createShape({
+                    price: ceiling,
+                    shape: 'horizontal_line',
+                    lock: true,
+                    overrides: { linecolor: '#ff00ff', linewidth: 2, showLabel: true, text: "CEILING: " + ceiling }
+                });
+            }
         });
     }
 
-    // Initialize default chart on page load
-    initChart();
+    // Load initial chart
+    window.onload = () => loadTradingView("NASDAQ:TPET", 0, 0);
 
     async function syncData() {
         const ticker = document.getElementById('tickerInput').value.toUpperCase().trim();
-        if (!ticker) return alert("Enter a ticker symbol.");
+        if (!ticker) return alert("Enter ticker.");
 
         try {
-            console.log("Querying Spreadsheet for:", ticker);
-            
-            // 1. Initial Fetch
             let response = await fetch(googleUrl);
             let data = await response.json();
-            
-            // 2. AUTO-ADD LOGIC
+
+            // Auto-Add Logic
             if (!data[ticker]) {
-                console.log("Ticker not found. Sending Auto-Add command...");
+                alert(`ADDING ${ticker} TO SPREADSHEET...`);
                 await fetch(`${googleUrl}?add=${ticker}`, { mode: 'no-cors' });
-                alert(`TICKER ${ticker} NOT FOUND. AUTO-ADDING TO SHEET... PLEASE WAIT 2 SECONDS.`);
-                await new Promise(resolve => setTimeout(resolve, 2000));
-                
-                // Re-fetch
+                await new Promise(res => setTimeout(res, 2500)); 
                 response = await fetch(googleUrl);
                 data = await response.json();
             }
 
-            const stockInfo = data[ticker];
-            if (stockInfo) {
-                const floorPrice = parseFloat(stockInfo.floor);
-                const ceilingPrice = parseFloat(stockInfo.ceiling);
-
-                initChart(ticker);
-
-                widget.onChartReady(() => {
-                    // Green Floor
-                    widget.chart().createShape({
-                        price: floorPrice,
-                        shape: 'horizontal_line',
-                        lock: true,
-                        overrides: { linecolor: '#00ff00', linewidth: 3, showLabel: true, text: "FLOOR: " + floorPrice }
-                    });
-
-                    // Purple Ceiling
-                    widget.chart().createShape({
-                        price: ceilingPrice,
-                        shape: 'horizontal_line',
-                        lock: true,
-                        overrides: { linecolor: '#ff00ff', linewidth: 2, showLabel: true, text: "CEILING: " + ceilingPrice }
-                    });
-                });
+            const info = data[ticker];
+            if (info) {
+                // This triggers the full reload and line drawing
+                loadTradingView(ticker, parseFloat(info.floor), parseFloat(info.ceiling));
             }
         } catch (err) {
-            console.error("System Sync Error:", err);
-            alert("Connection Error. Check Apps Script permissions.");
+            console.error("Sync Error:", err);
+            alert("Sync Failed. Check Script Permissions.");
         }
     }
 </script>
