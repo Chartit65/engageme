@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Terminal V3.2 | Handshake Fixed</title>
+    <title>Terminal V3.3 | Security Bypass</title>
     <style>
         body { background-color: #0a0a0a; color: #00ff00; font-family: 'Courier New', monospace; margin: 0; overflow: hidden; }
         #header { height: 50px; background: #111; border-bottom: 2px solid #333; display: flex; align-items: center; padding: 0 20px; justify-content: space-between; }
@@ -14,7 +14,7 @@
 <body>
 
 <div id="header">
-    <div>SYSTEM STATUS: ONLINE // BYPASS ENABLED</div>
+    <div>SYSTEM STATUS: ONLINE // CSP BYPASS ACTIVE</div>
     <div class="controls">
         <input type="text" id="tickerInput" placeholder="ENTER TICKER">
         <button id="syncBtn">SYNC DATA & CHART</button>
@@ -24,44 +24,53 @@
 
 <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
 
-<script>
-    // PASTE YOUR LATEST GOOGLE URL BETWEEN THE QUOTES BELOW
+<script type="text/javascript">
     const googleUrl = "https://script.google.com/macros/s/AKfycbwcWhXEgq_o7vNiRn09YKxsJCe4QNYPtEs0IU1zX6RB_R3ELJKF7kFUYsKza8mHz1hU/exec";
 
-    let tvWidget = null;
+    function runTerminal(symbol, f, c) {
+        // Clear old chart
+        const container = document.getElementById("chart-container");
+        container.innerHTML = "";
 
-    function drawChart(symbol, floor, ceiling) {
-        document.getElementById("chart-container").innerHTML = "";
-        
-        tvWidget = new TradingView.widget({
+        // Create the new widget
+        const widget = new TradingView.widget({
             "autosize": true,
             "symbol": symbol,
             "interval": "1",
             "theme": "dark",
             "container_id": "chart-container",
             "extended_hours": true,
-            "timezone": "Etc/UTC"
+            "timezone": "Etc/UTC",
+            "style": "1",
+            "locale": "en",
+            "toolbar_bg": "#f1f3f6",
+            "enable_publishing": false,
+            "hide_side_toolbar": false,
+            "allow_symbol_change": true
         });
 
-        // This replaces the broken 'onChartReady' function
-        setTimeout(() => {
-            try {
-                if (floor > 0) {
-                    tvWidget.chart().createShape({
-                        price: floor, shape: 'horizontal_line', lock: true,
-                        overrides: { linecolor: '#00ff00', linewidth: 3, showLabel: true, text: "FLOOR: " + floor }
-                    });
+        // The "Bypass" logic: Wait for the object to exist without using the 'onReady' trigger
+        var checkExist = setInterval(function() {
+            if (typeof widget !== 'undefined' && widget.chart) {
+                try {
+                    if (f > 0) {
+                        widget.chart().createShape({
+                            price: f, shape: 'horizontal_line', lock: true,
+                            overrides: { linecolor: '#00ff00', linewidth: 3, showLabel: true, text: "FLOOR: " + f }
+                        });
+                    }
+                    if (c > 0) {
+                        widget.chart().createShape({
+                            price: c, shape: 'horizontal_line', lock: true,
+                            overrides: { linecolor: '#ff00ff', linewidth: 2, showLabel: true, text: "CEILING: " + c }
+                        });
+                    }
+                    clearInterval(checkExist); // Stop checking once drawn
+                } catch (e) {
+                    // Still loading...
                 }
-                if (ceiling > 0) {
-                    tvWidget.chart().createShape({
-                        price: ceiling, shape: 'horizontal_line', lock: true,
-                        overrides: { linecolor: '#ff00ff', linewidth: 2, showLabel: true, text: "CEILING: " + ceiling }
-                    });
-                }
-            } catch (e) { 
-                console.log("Waiting for chart to stabilize..."); 
             }
-        }, 2000); // 2-second wait to ensure the chart is fully loaded
+        }, 500); // Check every 0.5 seconds
     }
 
     async function sync() {
@@ -71,22 +80,16 @@
         try {
             const res = await fetch(googleUrl);
             const data = await res.json();
-
-            if (data[t]) {
-                drawChart(t, parseFloat(data[t].floor), parseFloat(data[t].ceiling));
-            } else {
-                alert("TICKER NOT FOUND. ADDING TO SHEET...");
-                fetch(googleUrl + "?add=" + t, { mode: 'no-cors' });
-                setTimeout(() => sync(), 4000); // Wait 4 seconds for Google to write the row
-            }
+            const stock = data[t] || { floor: 0, ceiling: 0 };
+            runTerminal(t, parseFloat(stock.floor), parseFloat(stock.ceiling));
         } catch (e) {
-            console.error("Sync Error:", e);
-            drawChart(t, 0, 0); // Load basic chart even if Google fails
+            console.error("Data Fetch Failed:", e);
+            runTerminal(t, 0, 0);
         }
     }
 
     document.getElementById('syncBtn').onclick = sync;
-    window.onload = () => drawChart("PRCH", 0, 0);
+    window.onload = () => runTerminal("PRCH", 0, 0);
 </script>
 </body>
 </html>
