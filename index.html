@@ -2,66 +2,117 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EngageMe | Private Terminal</title>
+    <title>Market Intelligence Terminal | Floor Analysis</title>
     <style>
-        body { background-color: #0a0a0a; color: #00ff41; font-family: 'Courier New', monospace; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        #terminal-content { display: none; width: 90%; max-width: 900px; }
-        .panel { border: 1px solid #333; padding: 20px; background: #111; }
-        input { background: #000; border: 1px solid #00ff41; color: #00ff41; padding: 10px; width: 80%; }
-        button { background: #00ff41; color: #000; border: none; padding: 10px 20px; cursor: pointer; font-weight: bold; }
+        body { background-color: #0a0a0a; color: #00ff00; font-family: 'Courier New', monospace; margin: 0; overflow: hidden; }
+        #header { height: 50px; background: #111; border-bottom: 2px solid #333; display: flex; align-items: center; padding: 0 20px; justify-content: space-between; }
+        #chart-container { height: calc(100vh - 50px); width: 100%; }
+        .controls { display: flex; gap: 10px; }
+        input { background: #000; border: 1px solid #00ff00; color: #00ff00; padding: 5px; }
+        button { background: #00ff00; color: #000; border: none; padding: 5px 15px; cursor: pointer; font-weight: bold; }
+        button:hover { background: #00cc00; }
     </style>
 </head>
 <body>
 
-<div id="login-gate" class="panel">
-    <h2>FLOOR ACCESS REQUIRED</h2>
-    <input type="password" id="passInput" placeholder="ENTER ACCESS CODE...">
-    <button onclick="checkPass()">ENTER</button>
-</div>
-
-<div id="terminal-content">
-    <div class="panel">
-        <h1>ENGAGEME.LIVE // LIVE FLOOR</h1>
-        <p>SYSTEM STATUS: <span style="color:#00ff41">SECURE</span></p>
-        <hr style="border: 0.5px solid #333;">
-        <input type="text" id="tickerInput" placeholder="TICKER...">
-        <button onclick="processTicker()">SUBMIT</button>
-        <div id="log" style="margin-top:20px; height: 200px; overflow: auto; border: 1px solid #222; padding: 10px; font-size: 0.8rem;"></div>
+<div id="header">
+    <div>SYSTEM STATUS: ACTIVE // TERMINAL_01</div>
+    <div class="controls">
+        <input type="text" id="tickerInput" placeholder="ENTER TICKER (e.g. BTM)" style="text-transform:uppercase">
+        <button onclick="syncData()">SYNC DATA & CHART</button>
     </div>
 </div>
 
-<script>
-    const ACCESS_CODE = '26Normandy'; // CHANGE THIS TO YOUR PASSWORD
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbwJWRQEjuOK-ono5dw1wIxPkR-705xRBIlgUBkP8HRu4E7lQZAgHQVsjxF_QoISDmA/exec';
+<div id="chart-container" id="tv-chart"></div>
 
-    function checkPass() {
-        const input = document.getElementById('passInput').value;
-        if (input === ACCESS_CODE) {
-            document.getElementById('login-gate').style.display = 'none';
-            document.getElementById('terminal-content').style.display = 'block';
-        } else {
-            alert('ACCESS DENIED');
-        }
+<script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+
+<script>
+    // PASTE YOUR GOOGLE DEPLOYMENT URL HERE
+    const googleUrl = "YOUR_GOOGLE_SCRIPT_URL_HERE";
+
+    let widget;
+
+    function initChart(symbol = "NASDAQ:BTM", anchorPrice = null) {
+        widget = new TradingView.widget({
+            "autosize": true,
+            "symbol": symbol,
+            "interval": "1",
+            "timezone": "Etc/UTC",
+            "theme": "dark",
+            "style": "1",
+            "locale": "en",
+            "toolbar_bg": "#f1f3f6",
+            "enable_publishing": false,
+            "hide_top_toolbar": false,
+            "save_image": false,
+            "container_id": "chart-container",
+            "overrides": {
+                "mainSeriesProperties.paneProperties.topMargin": 20,
+                "mainSeriesProperties.paneProperties.bottomMargin": 20
+            }
+        });
     }
 
-    async function processTicker() {
+    // Initialize on start
+    initChart();
+
+    async function syncData() {
         const ticker = document.getElementById('tickerInput').value.toUpperCase();
-        const log = document.getElementById('log');
-        log.innerHTML += `<br>[${new Date().toLocaleTimeString()}] Sending ${ticker} to Floor...`;
+        if (!ticker) return alert("Enter a ticker symbol.");
 
         try {
-            await fetch(scriptURL, {
-                method: 'POST',
-                mode: 'no-cors',
-                body: JSON.stringify({ ticker: ticker }),
-                headers: { 'Content-Type': 'application/json' }
-            });
-            log.innerHTML += `<br><span style="color:white;">[SUCCESS] Data logged.</span>`;
-        } catch (e) {
-            log.innerHTML += `<br><span style="color:red;">[ERROR] Transmission failed.</span>`;
+            const response = await fetch(googleUrl);
+            const data = await response.json();
+            
+            // Search the data for the ticker
+            const row = data.find(r => r.Ticker && r.Ticker.toUpperCase() === ticker);
+
+            if (row) {
+                const floorPrice = parseFloat(row.FloorPrice);
+                const purpleLine = parseFloat(row.PurpleLine);
+
+                // GHOST CANDLE LOGIC: Snap chart to Floor Price
+                initChart(ticker, floorPrice);
+
+                widget.onChartReady(() => {
+                    // Create the Green Floor Line
+                    widget.chart().createShape({
+                        price: floorPrice,
+                        shape: 'horizontal_line',
+                        lock: true,
+                        overrides: {
+                            linecolor: '#00ff00',
+                            linewidth: 3,
+                            showLabel: true,
+                            text: "GREEN FLOOR: " + floorPrice
+                        }
+                    });
+
+                    // Create the Purple Dilution Line
+                    widget.chart().createShape({
+                        price: purpleLine,
+                        shape: 'horizontal_line',
+                        lock: true,
+                        overrides: {
+                            linecolor: '#ff00ff',
+                            linewidth: 2,
+                            showLabel: true,
+                            text: "PURPLE LIMIT: " + purpleLine
+                        }
+                    });
+                });
+
+                alert("SYSTEM SYNCED: " + ticker + " Precision Data Loaded.");
+            } else {
+                alert("Ticker " + ticker + " not found in Sheet.");
+            }
+        } catch (err) {
+            console.error(err);
+            alert("Connection Error. Check Google URL and Permissions.");
         }
     }
 </script>
+
 </body>
 </html>
