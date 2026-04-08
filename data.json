@@ -1,1 +1,5 @@
-
+{
+  "AAPL": { "floor": 150, "ceiling": 220, "dilution1_lo": 170, "dilution1_hi": 180, "dilution2_lo": 0, "dilution2_hi": 0 },
+  "NMRA": { "floor": 2.60, "ceiling": 7.50, "dilution1_lo": 7.00, "dilution1_hi": 8.00, "dilution2_lo": 10.00, "dilution2_hi": 12.00 },
+  "SOC":  { "floor": 5.00, "ceiling": 20.00, "dilution1_lo": 0, "dilution1_hi": 0, "dilution2_lo": 0, "dilution2_hi": 0 }
+}
