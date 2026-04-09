@@ -9,7 +9,7 @@ i_w   = input.float(0.0, "Manual Warrant")
 var float f_lo = na, var float f_hi = na, var float f_atm = na, var float f_w = na
 
 if syminfo.ticker == "TPET"
-    f_lo := 0.45, f_hi := 1.25, f_atm := 1.10, f_w := 1.35
+    f_lo := 0.42, f_hi := 0.58, f_atm := 0.615, f_w := 0.74
 else
     f_lo := i_lo, f_hi := i_hi, f_atm := i_atm, f_w := i_w
 
