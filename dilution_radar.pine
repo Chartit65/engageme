@@ -1,0 +1,43 @@
+//@version=6
+indicator("Dilution Gravity Mapper [v80] - FULL AUTO", overlay=true, max_boxes_count=50, max_labels_count=50, max_lines_count=50)
+
+i_lo  = input.float(0.0, "Manual Floor")
+i_hi  = input.float(0.0, "Manual Ceiling")
+i_atm = input.float(0.0, "Manual ATM")
+i_w   = input.float(0.0, "Manual Warrant")
+
+var float f_lo = na, var float f_hi = na, var float f_atm = na, var float f_w = na
+
+if syminfo.ticker == "TPET"
+    f_lo := 0.45, f_hi := 1.25, f_atm := 1.10, f_w := 1.35
+else
+    f_lo := i_lo, f_hi := i_hi, f_atm := i_atm, f_w := i_w
+
+var box b_green = na, var box b_yellow = na, var line l_atm = na
+var label lbl_hi = na, var label lbl_lo = na, var label lbl_w = na, var label lbl_a = na, var label lbl_delta = na
+
+box.delete(b_green), box.delete(b_yellow), line.delete(l_atm)
+label.delete(lbl_hi), label.delete(lbl_lo), label.delete(lbl_w), label.delete(lbl_a), label.delete(lbl_delta)
+
+if barstate.islast and not na(f_lo) and f_lo != 0
+    int b_width     = time - time[1]
+    int margin_time = time + (b_width * 60)
+    int label_time  = time + (b_width * 30)
+    int screen_anchor = time - (b_width * 150)
+
+    b_green := box.new(screen_anchor, f_hi, margin_time, f_lo, xloc=xloc.bar_time, border_color=color.green, bgcolor=color.new(color.green, 85))
+    lbl_hi  := label.new(label_time, f_hi, "FLOOR CEILING: $" + str.tostring(f_hi), xloc=xloc.bar_time, color=color.green, style=label.style_label_left, textcolor=color.black)
+    lbl_lo  := label.new(label_time, f_lo, "CASH SUPPORT: $" + str.tostring(f_lo), xloc=xloc.bar_time, color=color.green, style=label.style_label_left, textcolor=color.black)
+
+    float w_t = f_w * 0.02
+    b_yellow := box.new(screen_anchor, f_w + w_t, margin_time, f_w - w_t, xloc=xloc.bar_time, border_color=color.yellow, bgcolor=color.new(color.yellow, 80))
+    lbl_w    := label.new(label_time, f_w, "WARRANT STRIKE: $" + str.tostring(f_w), xloc=xloc.bar_time, color=color.yellow, style=label.style_label_left, textcolor=color.black)
+
+    l_atm := line.new(screen_anchor, f_atm, margin_time, f_atm, xloc=xloc.bar_time, color=color.purple, width=3, style=line.style_dashed)
+    lbl_a := label.new(label_time, f_atm, "ACTIVE ATM: $" + str.tostring(f_atm), xloc=xloc.bar_time, color=color.purple, style=label.style_label_left, textcolor=color.white)
+
+    float delta = close - f_lo
+    lbl_delta := label.new(time + (b_width * 5), close, "FLOOR DELTA: $" + str.format("{0,number,#.###}", delta), xloc=xloc.bar_time, color=delta >= 0 ? color.green : color.red, style=label.style_label_left, textcolor=color.white)
+
+var table ver_check = table.new(position.bottom_right, 1, 1)
+table.cell(ver_check, 0, 0, "SYSTEM v80: AUTO-READY", bgcolor=color.black, text_color=color.yellow)
