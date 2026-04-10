@@ -12,74 +12,89 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 100vh; /* Changed from height to min-height */
+            min-height: 100vh;
             margin: 0;
-            padding: 20px; /* Safety padding */
+            padding: 20px;
         }
         .glow {
             position: absolute;
             width: 800px;
             height: 800px;
-            background: radial-gradient(circle, rgba(28, 66, 122, 0.1) 0%, transparent 65%);
+            background: radial-gradient(circle, rgba(0, 255, 204, 0.08) 0%, transparent 65%);
             z-index: 0;
         }
         .container {
             position: relative;
             z-index: 1;
             text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 4rem 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 5rem 2rem;
             border-radius: 4px;
-            /* Removed backdrop-filter for better compatibility */
-            background: #0a0a0a; 
-            box-shadow: 0 40px 80px rgba(0,0,0,0.8);
-            max-width: 600px;
+            background: #080808; 
+            box-shadow: 0 40px 100px rgba(0,0,0,0.9);
+            max-width: 850px;
             width: 100%;
         }
+        /* Turquoise Punch Badge */
         .status-badge {
             display: inline-block;
-            padding: 0.5rem 1rem;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            font-size: 0.7rem;
+            padding: 0.6rem 1.4rem;
+            background: rgba(0, 255, 204, 0.05);
+            border: 1px solid rgba(0, 255, 204, 0.3);
+            font-size: 0.75rem;
             text-transform: uppercase;
-            letter-spacing: 3px;
-            margin-bottom: 2.5rem;
-            color: #888;
+            letter-spacing: 4px;
+            margin-bottom: 3.5rem;
+            color: #00ffcc; /* That Neon Turquoise Punch */
+            font-weight: 700;
         }
         h1 {
-            font-size: 3rem;
-            letter-spacing: 1px;
-            margin: 0 0 1.2rem 0;
-            font-weight: 800;
+            font-size: 3.2rem;
+            letter-spacing: 2px;
+            margin: 0 0 1.5rem 0;
+            font-weight: 900;
             text-transform: uppercase;
-            /* The "Hot E" Streamlined Silver Gradient */
-            background: linear-gradient(to right, #ffffff 0%, #ffffff 10%, #aaaaaa 40%, #666666 100%);
+            /* -- THE RIPPING SILVER GRADIENT -- */
+            /* This creates two hot spots: one at the start (ENGAGEME) and one at the second word (ANALYTICS) */
+            background: linear-gradient(to right, 
+                #ffffff 0%,   /* Hot E */
+                #777777 25%,  /* Fades through GAGEME */
+                #ffffff 45%,  /* Hot A (Second Boost) */
+                #bbbbbb 70%,  /* Fades through LYTICS */
+                #555555 100%  /* Deep Shadow Finish */
+            );
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
         }
         p {
-            color: #666;
+            color: #555;
             font-size: 1.1rem;
-            line-height: 1.6;
-            margin-bottom: 3rem;
+            line-height: 1.8;
+            margin-bottom: 4rem;
             font-weight: 300;
+            letter-spacing: 1px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
         }
         .contact-btn {
             display: inline-block;
-            padding: 1.1rem 2.8rem;
+            padding: 1.2rem 3.5rem;
             background: #ffffff;
             color: #000;
             text-decoration: none;
             font-weight: 800;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             border-radius: 2px;
-            letter-spacing: 2px;
+            letter-spacing: 3px;
             text-transform: uppercase;
-            transition: opacity 0.2s;
+            transition: all 0.3s ease;
         }
         .contact-btn:hover {
-            opacity: 0.8;
+            background: #00ffcc; /* Glows Turquoise on hover */
+            transform: translateY(-2px);
+            box-shadow: 0 0 20px rgba(0, 255, 204, 0.4);
         }
     </style>
 </head>
