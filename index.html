@@ -3,97 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ENGAGEME ANALYTICS | TERMINAL_V.1.0</title>
+    <title>ENGAGEME ANALYTICS | TERMINAL</title>
     <style>
-        /* Bloomberg & HFT Palette */
-        :root {
-            --bloomberg-black: #000000;
-            --bloomberg-amber: #ffb400; /* Standard Terminal Amber */
-            --bloomberg-blue: #0068ff;
-            --bloomberg-green: #00ff88;
-            --text-main: #e0e0e0;
-            --border: #222;
-        }
-
         body {
-            background-color: var(--bloomberg-black);
-            color: var(--text-main);
-            /* Monospace font gives it the "Machine" feel */
+            background-color: #000000;
+            color: #ffb400; /* Bloomberg Amber */
             font-family: 'Courier New', Courier, monospace;
             margin: 0;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-        }
-
-        /* Top Status Bar */
-        .status-bar {
-            background: #111;
-            border-bottom: 1px solid var(--border);
-            padding: 8px 20px;
-            font-size: 12px;
-            display: flex;
-            justify-content: space-between;
-            color: var(--bloomberg-amber);
-        }
-
-        /* Main Terminal Container */
-        .main-view {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             padding: 20px;
+            display: flex;
+            justify-content: center;
         }
-
-        .terminal-box {
-            border: 2px solid var(--border);
-            padding: 40px;
-            max-width: 800px;
-            background: #050505;
-            position: relative;
+        .terminal {
+            width: 100%;
+            max-width: 900px;
+            border: 1px solid #333;
+            background-color: #050505;
+            padding: 30px;
+            box-sizing: border-box;
         }
-
-        /* The Header Gradient (Bloomberg Style) */
         .header {
-            border-left: 4px solid var(--bloomberg-amber);
-            padding-left: 20px;
-            margin-bottom: 30px;
+            border-bottom: 2px solid #ffb400;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
         }
-
         h1 {
-            font-size: 2.5rem;
+            font-size: 28px;
             margin: 0;
-            color: var(--bloomberg-amber);
-            letter-spacing: 2px;
             text-transform: uppercase;
+            letter-spacing: 3px;
         }
-
-        .sub-title {
-            color: var(--bloomberg-blue);
+        .sub {
+            color: #0068ff; /* Bloomberg Blue */
+            font-size: 14px;
             font-weight: bold;
             margin-top: 5px;
         }
-
-        .data-stream {
-            font-size: 14px;
-            line-height: 1.6;
-            color: var(--text-main);
-            margin-bottom: 30px;
-            border-top: 1px solid var(--border);
-            padding-top: 20px;
+        .line {
+            margin: 15px 0;
+            font-size: 16px;
+            line-height: 1.4;
         }
-
-        .cmd-line {
-            color: var(--bloomberg-green);
+        .cmd {
+            color: #00ff88; /* Green */
+        }
+        .contact-btn {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 10px 20px;
+            border: 1px solid #ffb400;
+            color: #ffb400;
+            text-decoration: none;
             font-weight: bold;
         }
+        .contact-btn:hover {
+            background: #ffb400;
+            color: #000;
+        }
+    </style>
+</head>
+<body>
 
-        /* Footer / Contact */
-        .contact {
-            font-size: 13px;
-            color: var(--bloomberg-amber);
-            text-decoration: none;
-            border: 1px solid var(--bloomberg-amber);
-            padding: 10px 20px;
-            transition:
+    <div class="terminal">
+        <div class="header">
+            <h1>ENGAGEME_ANALYTICS</h1>
+            <div class="sub">LIQUIDITY_DYNAMICS // DILUTION_MAPPING_V1.0</div>
+        </div>
+
+        <div class="line">
+            <span class="cmd">>> STATUS:</span> SYSTEM_ACTIVE_STAGING
+        </div>
+        <div class="line">
+            <span class="cmd">>> ARCHITECTURE:</span> HFT MICROSTRUCTURE ENGINE
+        </div>
+        <div class="line">
+            <span class="cmd">>> MONITORING:</span> REAL-TIME EQUITY DILUTION CYCLES
+        </div>
+        <div class="line">
+            <span class="cmd">>> TARGET:</span> INSTITUTIONAL RISK MANAGEMENT TOOLS
+        </div>
+
+        <a href="mailto:info@novamulti.com" class="contact-btn">ACCESS_TERMINAL: info@novamulti.com</a>
+    </div>
+
+</body>
+</html>
