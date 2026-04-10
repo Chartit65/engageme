@@ -6,9 +6,9 @@
     <title>ENGAGEME ANALYTICS | LIQUIDITY SYSTEMS</title>
     <style>
         body {
-            background-color: #050505;
+            background-color: #030303;
             color: #ffffff;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -16,73 +16,82 @@
             margin: 0;
             overflow: hidden;
         }
-        /* Background Glow for that 'Elite' feel */
+        /* Sublte deep blue glow - the 'exclusive' look */
         .glow {
             position: absolute;
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, rgba(0, 104, 255, 0.07) 0%, transparent 70%);
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(28, 66, 122, 0.12) 0%, transparent 65%);
             z-index: 0;
         }
         .container {
             position: relative;
             z-index: 1;
             text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 5rem;
-            border-radius: 24px;
-            background: rgba(10, 10, 10, 0.8);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 40px 100px rgba(0,0,0,0.8);
-            max-width: 700px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 4.5rem;
+            border-radius: 12px;
+            background: rgba(15, 15, 15, 0.7);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 50px 100px rgba(0,0,0,0.9);
+            max-width: 750px;
         }
         .status-badge {
             display: inline-block;
-            padding: 0.5rem 1.2rem;
-            background: rgba(0, 255, 204, 0.1);
-            border: 1px solid rgba(0, 255, 204, 0.3);
-            border-radius: 50px;
-            font-size: 0.75rem;
+            padding: 0.6rem 1.4rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 4px;
+            font-size: 0.7rem;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 2.5rem;
-            color: #00ffcc;
-            font-weight: bold;
+            letter-spacing: 3px;
+            margin-bottom: 3rem;
+            color: #aaa;
+            font-weight: 500;
         }
         h1 {
-            font-size: 3.5rem;
-            letter-spacing: -2px;
-            margin: 0 0 1rem 0;
-            background: linear-gradient(to bottom right, #ffffff, #666666);
+            font-size: 3.2rem;
+            letter-spacing: -1px;
+            margin: 0 0 1.2rem 0;
+            font-weight: 700;
+            /* Brushed Silver Gradient */
+            background: linear-gradient(135deg, #ffffff 20%, #999999 50%, #ffffff 80%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
         p {
-            color: #888;
-            font-size: 1.2rem;
-            line-height: 1.6;
-            margin-bottom: 3rem;
+            color: #999;
+            font-size: 1.15rem;
+            line-height: 1.7;
+            margin-bottom: 3.5rem;
+            font-weight: 300;
+            letter-spacing: 0.5px;
         }
-        .terminal-line {
-            font-family: 'Courier New', Courier, monospace;
-            color: #555;
-            font-size: 0.9rem;
-            margin-bottom: 2rem;
+        .terminal-log {
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+            color: #444;
+            font-size: 0.8rem;
+            margin-bottom: 2.5rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
         }
         .contact-btn {
             display: inline-block;
-            padding: 1rem 2.5rem;
-            background: transparent;
-            border: 1px solid #fff;
-            color: #fff;
+            padding: 1.1rem 3rem;
+            background: #ffffff;
+            color: #000;
             text-decoration: none;
-            font-weight: 600;
-            border-radius: 8px;
-            transition: all 0.3s ease;
+            font-weight: 700;
+            font-size: 0.85rem;
+            border-radius: 4px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
         }
         .contact-btn:hover {
-            background: #fff;
-            color: #000;
+            background: #e0e0e0;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
         }
     </style>
 </head>
@@ -91,15 +100,15 @@
     <div class="glow"></div>
 
     <div class="container">
-        <div class="status-badge">Phase 1: Systems Staging</div>
-        <h1>ENGAGEME_ANALYTICS</h1>
-        <p>Architecting institutional-grade HFT engines for real-time liquidity mapping and proprietary equity dilution analysis.</p>
+        <div class="status-badge">Private Beta // 2026</div>
+        <h1>EngageMe Analytics</h1>
+        <p>Architecting institutional-grade microstructure engines for real-time liquidity mapping and proprietary equity dilution analysis.</p>
         
-        <div class="terminal-line">
-            [SYS_LOG]: MONITORING_TAPE // CALCULATING_GRAVITY_ZONES...
+        <div class="terminal-log">
+            Status: Staging_Systems // Secure_Line_Active
         </div>
 
-        <a href="mailto:info@novamulti.com" class="contact-btn">REQUEST ACCESS</a>
+        <a href="mailto:info@novamulti.com" class="contact-btn">Request Access</a>
     </div>
 
 </body>
